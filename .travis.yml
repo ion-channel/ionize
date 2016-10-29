@@ -1,0 +1,8 @@
+language: go
+script:
+  - make test
+notifications:
+  email: false
+  slack:
+    rooms:
+      - ionchannel:judViUieHy4ppRX1vYhok1HK#build
