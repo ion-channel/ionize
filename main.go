@@ -16,6 +16,16 @@ import (
 	"github.com/Jeffail/gabs"
 )
 
+const (
+	app            = "ION-CI"
+	appDescription = "CI/CD logic wrapper around ion-connect"
+)
+
+var (
+	buildTime  string
+	appVersion string
+)
+
 func main() {
 
 	argsWithoutProg := os.Args[1:]
