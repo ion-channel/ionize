@@ -1,0 +1,3 @@
+package: github.com/ion-channel/ion-ci
+import:
+- package: github.com/Jeffail/gabs
