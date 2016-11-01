@@ -35,6 +35,9 @@ coverage:  ## Generates the code coverage from all the tests
 help:  ## Show This Help
 	@for line in $$(cat Makefile | grep "##" | grep -v "grep" | sed  "s/:.*##/:/g" | sed "s/\ /!/g"); do verb=$$(echo $$line | cut -d ":" -f 1); desc=$$(echo $$line | cut -d ":" -f 2 | sed "s/!/\ /g"); printf "%-30s--%s\n" "$$verb" "$$desc"; done
 
+install:  ## Installs the binary
+	$(GOCMD) install
+
 release:  ## Build binaiers for the primary OS'
 	GOOS=linux $(GOBUILD) -ldflags "-X main.buildTime=$(DATE) -X main.appVersion=$(VERSION)" -o $(APP)-linux .
 	GOOS=darwin $(GOBUILD) -ldflags "-X main.buildTime=$(DATE) -X main.appVersion=$(VERSION)" -o $(APP)-darwin .
