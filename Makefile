@@ -35,15 +35,21 @@ coverage:  ## Generates the code coverage from all the tests
 help:  ## Show This Help
 	@for line in $$(cat Makefile | grep "##" | grep -v "grep" | sed  "s/:.*##/:/g" | sed "s/\ /!/g"); do verb=$$(echo $$line | cut -d ":" -f 1); desc=$$(echo $$line | cut -d ":" -f 2 | sed "s/!/\ /g"); printf "%-30s--%s\n" "$$verb" "$$desc"; done
 
+install:  ## Installs the binary
+	$(GOCMD) install
+
 release:  ## Build binaiers for the primary OS'
 	GOOS=linux $(GOBUILD) -ldflags "-X main.buildTime=$(DATE) -X main.appVersion=$(VERSION)" -o $(APP)-linux .
 	GOOS=darwin $(GOBUILD) -ldflags "-X main.buildTime=$(DATE) -X main.appVersion=$(VERSION)" -o $(APP)-darwin .
 	GOOS=windows $(GOBUILD) -ldflags "-X main.buildTime=$(DATE) -X main.appVersion=$(VERSION)" -o $(APP)-windows .
 
-test: unit_test ## Run all available tests
+test: unit_test acceptance_test  ## Runs all available tests
 
 unit_test:  ## Run unit tests
 	$(GOTEST)
+
+acceptance_test:  ## Run acceptance tests
+	cd ext/acceptance_tests && gem install bundler && bundle install && bundle exec cucumber -t ~@expected_failure
 
 fmt:  ## Run go fmt
 	$(GOFMT)

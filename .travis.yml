@@ -1,6 +1,12 @@
 language: go
+go:
+  - 1.6
+  - tip
 script:
-  - make test
+  - make unit_test
+  - make build
+  - make install
+  - make acceptance_test
 notifications:
   email: false
   slack:
