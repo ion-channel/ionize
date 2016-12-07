@@ -1,16 +1,18 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"os"
 	"os/exec"
+	"strings"
 	"time"
 
-	"github.com/Jeffail/gabs"
+	"github.com/urfave/cli"
 )
 
 const (
-	app            = "ION-CI"
+	appName        = "IONCI"
 	appDescription = "CI/CD logic wrapper around ion-connect"
 )
 
@@ -19,67 +21,142 @@ var (
 	appVersion string
 )
 
+type analysisStatus struct {
+	AccountID string    `json:"account_id"`
+	CreatedAt time.Time `json:"created_at"`
+	ID        string    `json:"id"`
+	Message   string    `json:"message"`
+	ProjectID string    `json:"project_id"`
+	Status    string    `json:"status"`
+	UpdatedAt time.Time `json:"updated_at"`
+}
+
 func main() {
+	app := cli.NewApp()
+	app.Name = strings.ToLower(appName)
+	app.Version = appVersion
+	app.Usage = appDescription
 
-	argsWithoutProg := os.Args[1:]
-	//fmt.Println(argsWithoutProg)
-	err, analysisid := AnalyzeProject(argsWithoutProg[0], argsWithoutProg[1], argsWithoutProg[2])
-	if err {
-		fmt.Println("The build passed : ", false)
-		os.Exit(1)
+	app.Flags = []cli.Flag{
+		cli.StringFlag{
+			Name:   "account-id, account",
+			Usage:  "Account ID for accessing Ion Channel",
+			EnvVar: fmt.Sprintf("%v_%v", appName, "ACCOUNT_ID"),
+		},
 	}
-	var status string
-	for ok := true; ok; ok = (status == "accepted" || err == true) {
-		time.Sleep(500 * time.Millisecond)
-		err, status = GetAnalysisStatus(analysisid)
-		if err {
-			fmt.Println("The build passed : ", false)
-			os.Exit(1)
-		}
-	}
-	err, passfail := GetAnalysis(analysisid)
-	if err {
-		fmt.Println("The build passed : ", false)
-		os.Exit(1)
-	}
-	fmt.Println("The build passed : ", passfail)
+
+	app.EnableBashCompletion = true
+	app.Commands = append(app.Commands, analysisCommands()...)
+
+	app.Run(os.Args)
 }
 
-func AnalyzeProject(projectid string, accountid string, buildnumber string) (bool, string) {
-	cmdName := "ion-connect"
-	cmdArgs := []string{"scanner", "analyze-project", "--account-id", accountid, "--project-id", projectid, buildnumber}
-	out, err2 := exec.Command(cmdName, cmdArgs...).Output()
-	if err2 != nil {
-		return true, ""
+func analysisCommands() []cli.Command {
+	var projectID, buildNum string
+	analysisCmd := []cli.Command{
+		{
+			Name:  "analysis",
+			Usage: "perform an analysis of a project",
+			Flags: []cli.Flag{
+				cli.StringFlag{
+					Name:        "project-id, project",
+					Usage:       "Project ID for the analysis",
+					Destination: &projectID,
+				},
+				cli.StringFlag{
+					Name:        "buildnum, build-number",
+					Usage:       "Build number to inspect",
+					Destination: &buildNum,
+				},
+			},
+			Action: func(c *cli.Context) error {
+				accountID := c.GlobalString("account_id")
+				if projectID == "" {
+					return fmt.Errorf("Missing Flag: project_id")
+				}
+				if buildNum == "" {
+					return fmt.Errorf("Missing Flag: buildnumber")
+				}
+
+				analysis, err := StartProjectAnalysis(accountID, projectID, buildNum)
+				if err != nil {
+					return err
+				}
+
+				status := make(chan int, 1)
+				go func() {
+					for {
+						<-time.Tick(1 * time.Second)
+						analysis, err := GetAnalysisStatus(analysis)
+						if err != nil {
+							status <- 1
+							break
+						}
+
+						if analysis.Status == "finished" {
+							status <- 0
+							break
+						}
+					}
+
+					close(status)
+				}()
+
+				select {
+				case s := <-status:
+					if s == 0 {
+						res, err := GetAnalysis(analysis)
+						if err != nil {
+							return err
+						}
+
+						fmt.Println(string(res))
+					} else {
+						return fmt.Errorf("Issue getting analysis")
+					}
+				case <-time.After(time.Second * 20):
+					return fmt.Errorf("Timed out waiting for analysis")
+				}
+
+				return nil
+			},
+		},
 	}
-	jsonParsed2, err2 := gabs.ParseJSON(out)
-	if str, ok := jsonParsed2.Path("id").Data().(string); ok {
-		return false, str
-	}
-	return true, ""
+
+	return analysisCmd
 }
 
-func GetAnalysisStatus(analysisid string) (bool, string) {
+func StartProjectAnalysis(accountID, projectID, buildNumber string) (*analysisStatus, error) {
 	cmdName := "ion-connect"
-	cmdArgs := []string{"scanner", "get-analysis-status", "--account-id", "account_id", "--project-id", "7b9a0a87-fbe6-40c1-aa37-89acc6e5c191", analysisid}
-	out, err2 := exec.Command(cmdName, cmdArgs...).Output()
-	if err2 != nil {
-		return true, ""
+	cmdArgs := []string{"scanner", "analyze-project", "--account-id", accountID, "--project-id", projectID, buildNumber}
+
+	o, err := exec.Command(cmdName, cmdArgs...).Output()
+
+	a := &analysisStatus{}
+	err = json.Unmarshal(o, &a)
+	if err != nil {
+		return nil, fmt.Errorf("Cannot parse analysis response: %v", err.Error())
 	}
-	jsonParsed2, err2 := gabs.ParseJSON(out)
-	if str, ok := jsonParsed2.Path("status").Data().(string); ok {
-		return false, str
-	}
-	return true, ""
+
+	return a, err
 }
 
-func GetAnalysis(analysisid string) (bool, bool) {
+func GetAnalysisStatus(analysis *analysisStatus) (*analysisStatus, error) {
 	cmdName := "ion-connect"
-	cmdArgs := []string{"analysis", "get-analysis", "--account-id", "account_id", "--project-id", "7b9a0a87-fbe6-40c1-aa37-89acc6e5c191", analysisid}
-	out, err2 := exec.Command(cmdName, cmdArgs...).Output()
-	if err2 != nil {
-		return true, false
+	cmdArgs := []string{"scanner", "get-analysis-status", "--account-id", analysis.AccountID, "--project-id", analysis.ProjectID, analysis.ID}
+
+	o, err := exec.Command(cmdName, cmdArgs...).Output()
+	a := &analysisStatus{}
+	err = json.Unmarshal(o, &a)
+	if err != nil {
+		return nil, fmt.Errorf("Cannot parse analysis response: %v", err.Error())
 	}
-	jsonParsed2, err2 := gabs.ParseJSON(out)
-	return false, jsonParsed2.Path("passed").Data().(bool)
+
+	return a, err
+}
+
+func GetAnalysis(analysis *analysisStatus) ([]byte, error) {
+	cmdName := "ion-connect"
+	cmdArgs := []string{"analysis", "get-analysis", "--account-id", analysis.AccountID, "--project-id", analysis.ProjectID, analysis.ID}
+	return exec.Command(cmdName, cmdArgs...).Output()
 }
