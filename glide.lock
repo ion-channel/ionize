@@ -1,6 +1,8 @@
 hash: 6b4b02917c938e9948364cad160f859bda41f60bc8cf07d5c72723d23933c2d5
-updated: 2016-10-29T14:53:57.818160524-07:00
+updated: 2016-12-06T16:39:41.722410831-08:00
 imports:
 - name: github.com/Jeffail/gabs
-  version: 855034b6b7a3b7144977efcaefe72d2c64b0d039
+  version: 2a3aa15961d5fee6047b8151b67ac2f08ba2c48c
+- name: github.com/urfave/cli
+  version: 0bdeddeeb0f650497d603c4ad7b20cfe685682f6
 testImports: []
