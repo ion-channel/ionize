@@ -22,7 +22,7 @@ end
 
 # Thens
 Then(/^the analysis should fail$/) do
-  expect(@analysis).to include('false')
+  expect(@analysis).to eq('')
 end
 
 Then(/^the analysis should succeed$/) do
