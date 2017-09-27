@@ -1,4 +1,4 @@
-// Copyright © 2017 NAME HERE <EMAIL ADDRESS>
+// Copyright © 2017 Ion Channel dev@ionchannel.io
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,12 +17,13 @@ package cmd
 import (
 	"encoding/json"
 	"fmt"
+	"log"
+	"time"
+
 	"github.com/ion-channel/ionic"
 	"github.com/ion-channel/ionic/scanner"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-	"log"
-	"time"
 )
 
 // AnalyzeCmd represents the doAnalysis command
@@ -36,7 +37,7 @@ ionize analyze
 Will read the configuration from the $PWD/.ionize.yaml file and begin an analysis.
 `,
 	Run: func(cmd *cobra.Command, args []string) {
-		log.Println("Run the analysis from the . file")
+		fmt.Println("Run the analysis from the . file")
 		key := viper.GetString("key")
 		api := viper.GetString("api")
 		cli, err := ionic.New(key, api)
@@ -53,7 +54,7 @@ Will read the configuration from the $PWD/.ionize.yaml file and begin an analysi
 
 		value := viper.GetFloat64("coverage")
 		if value != 0.0 {
-			log.Println("Adding external coverage scan data")
+			fmt.Println("Adding external coverage scan data")
 			coverage := scanner.ExternalCoverage{value}
 			scan := scanner.ExternalScan{}
 			scan.Coverage = &coverage

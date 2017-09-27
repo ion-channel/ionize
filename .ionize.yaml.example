@@ -1,0 +1,7 @@
+key: ion channel api token
+# for use in no production environments
+# api: https://api.test.ionchannel.io/
+team: team id
+project: project id
+# specify the location of the coverage value
+coverage: coverage.txt
