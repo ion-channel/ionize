@@ -1,8 +1,64 @@
-hash: 6b4b02917c938e9948364cad160f859bda41f60bc8cf07d5c72723d23933c2d5
-updated: 2016-12-06T16:39:41.722410831-08:00
+hash: f088e28414c1ebcc638f087cc45fd0efeb771cf7fb1eb4458804d183267f8e7c
+updated: 2017-09-27T09:53:14.633108152-07:00
 imports:
-- name: github.com/Jeffail/gabs
-  version: 2a3aa15961d5fee6047b8151b67ac2f08ba2c48c
-- name: github.com/urfave/cli
-  version: 0bdeddeeb0f650497d603c4ad7b20cfe685682f6
+- name: github.com/fsnotify/fsnotify
+  version: 4da3e2cfbabc9f751898f250b49f2439785783a1
+- name: github.com/hashicorp/hcl
+  version: 68e816d1c783414e79bc65b3994d9ab6b0a722ab
+  subpackages:
+  - hcl/ast
+  - hcl/parser
+  - hcl/scanner
+  - hcl/strconv
+  - hcl/token
+  - json/parser
+  - json/scanner
+  - json/token
+- name: github.com/inconshreveable/mousetrap
+  version: 76626ae9c91c4f2a10f34cad8ce83ea42c93bb75
+- name: github.com/ion-channel/ionic
+  version: 30834e92981a5dcedd6e90206c2e042a8c0f86d5
+  subpackages:
+  - analysis
+  - events
+  - pagination
+  - projects
+  - reports
+  - rules
+  - rulesets
+  - scanner
+  - teams
+  - users
+  - vulnerabilities
+- name: github.com/magiconair/properties
+  version: 8d7837e64d3c1ee4e54a880c5a920ab4316fc90a
+- name: github.com/mitchellh/mapstructure
+  version: d0303fe809921458f417bcf828397a65db30a7e4
+- name: github.com/pelletier/go-toml
+  version: 16398bac157da96aa88f98a2df640c7f32af1da2
+- name: github.com/spf13/afero
+  version: ee1bd8ee15a1306d1f9201acc41ef39cd9f99a1b
+  subpackages:
+  - mem
+- name: github.com/spf13/cast
+  version: acbeb36b902d72a7a4c18e8f3241075e7ab763e4
+- name: github.com/spf13/cobra
+  version: b78744579491c1ceeaaa3b40205e56b0591b93a3
+- name: github.com/spf13/jwalterweatherman
+  version: 12bd96e66386c1960ab0f74ced1362f66f552f7b
+- name: github.com/spf13/pflag
+  version: 7aff26db30c1be810f9de5038ec5ef96ac41fd7c
+- name: github.com/spf13/viper
+  version: 25b30aa063fc18e48662b86996252eabdcf2f0c7
+- name: golang.org/x/sys
+  version: 314a259e304ff91bd6985da2a7149bbf91237993
+  subpackages:
+  - unix
+- name: golang.org/x/text
+  version: ac87088df8ef557f1e32cd00ed0b6fbc3f7ddafb
+  subpackages:
+  - transform
+  - unicode/norm
+- name: gopkg.in/yaml.v2
+  version: eb3733d160e74a9c7e442f435eb3bea458e1d19f
 testImports: []
