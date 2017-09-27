@@ -15,10 +15,10 @@
 package cmd
 
 import (
-  "encoding/json"
+	"encoding/json"
 	"fmt"
 	"github.com/ion-channel/ionic"
-  "github.com/ion-channel/ionic/scanner"
+	"github.com/ion-channel/ionic/scanner"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"log"
@@ -51,59 +51,59 @@ Will read the configuration from the $PWD/.ionize.yaml file and begin an analysi
 		}
 		id := analysisStatus.ID
 
-    value := viper.GetFloat64("coverage")
-    if value != 0.0 {
-      log.Println("Adding external coverage scan data")
-      coverage := scanner.ExternalCoverage{value}
-      scan := scanner.ExternalScan{}
-      scan.Coverage = &coverage
+		value := viper.GetFloat64("coverage")
+		if value != 0.0 {
+			log.Println("Adding external coverage scan data")
+			coverage := scanner.ExternalCoverage{value}
+			scan := scanner.ExternalScan{}
+			scan.Coverage = &coverage
 			analysisStatus, err = cli.AddScanResult(id, team, project, "accepted", "coverage", scan)
-      if err != nil {
-        log.Fatalf("Analysis Report request failed for %s: %v", project, err.Error())
-      }
-    }
+			if err != nil {
+				log.Fatalf("Analysis Report request failed for %s: %v", project, err.Error())
+			}
+		}
 
 		fmt.Print("Waiting for analysis to finish")
 		for analysisStatus.Status == "accepted" {
 			fmt.Print(".")
 			time.Sleep(10 * time.Second)
 			analysisStatus, err = cli.GetAnalysisStatus(id, team, project)
-      if err != nil {
-        log.Fatalf("Analysis Status request failed for %s: %v", project, err.Error())
-      }
+			if err != nil {
+				log.Fatalf("Analysis Status request failed for %s: %v", project, err.Error())
+			}
 		}
-    fmt.Printf("%s\n", analysisStatus.Status)
+		fmt.Printf("%s\n", analysisStatus.Status)
 
-    fmt.Println("Checking status of scans")
-    report, err := cli.GetReport(id, team, project)
-    if err != nil {
-      log.Fatalf("Analysis Report request failed for %s (%s): %v", project, id, err.Error())
-    }
+		fmt.Println("Checking status of scans")
+		report, err := cli.GetReport(id, team, project)
+		if err != nil {
+			log.Fatalf("Analysis Report request failed for %s (%s): %v", project, id, err.Error())
+		}
 
-    if !report.Passed {
-      fmt.Println("Analysis failed on a rule")
-    } else {
-      fmt.Println("Analysis passed all rules")
-    }
+		if !report.Passed {
+			fmt.Println("Analysis failed on a rule")
+		} else {
+			fmt.Println("Analysis passed all rules")
+		}
 
-    for _, scanSummary := range report.ScanSummaries {
-      scanData := make(map[string]interface{})
+		for _, scanSummary := range report.ScanSummaries {
+			scanData := make(map[string]interface{})
 
-      err := json.Unmarshal(scanSummary, &scanData)
-      if err != nil {
-        log.Fatalf("Analysis Report request failed for %s (%s): %v", project, id, err.Error())
-      }
+			err := json.Unmarshal(scanSummary, &scanData)
+			if err != nil {
+				log.Fatalf("Analysis Report request failed for %s (%s): %v", project, id, err.Error())
+			}
 
-      fmt.Print(scanData["summary"], "...Rule Type: ")
-      fmt.Print(scanData["type"], "...", )
-      if scanData["passed"].(bool) {
-        fmt.Print("passed")
-      } else {
-        fmt.Print("not passed")
-      }
+			fmt.Print(scanData["summary"], "...Rule Type: ")
+			fmt.Print(scanData["type"], "...")
+			if scanData["passed"].(bool) {
+				fmt.Print("passed")
+			} else {
+				fmt.Print("not passed")
+			}
 
-      fmt.Println("...Risk: ", scanData["risk"])
-    }
+			fmt.Println("...Risk: ", scanData["risk"])
+		}
 
 	},
 }
