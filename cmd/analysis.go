@@ -15,7 +15,6 @@
 package cmd
 
 import (
-	"encoding/json"
 	"fmt"
 	"log"
 	"os"
@@ -48,7 +47,8 @@ Will read the configuration from the $PWD/.ionize.yaml file and begin an analysi
 		}
 		project := viper.GetString("project")
 		team := viper.GetString("team")
-		analysisStatus, err := cli.AnalyzeProject(team, project)
+		branch := getBranch()
+		analysisStatus, err := cli.AnalyzeProject(project, team, branch)
 		if err != nil {
 			log.Fatalf("Analysis request failed for %s: %v", project, err.Error())
 		}
@@ -82,7 +82,7 @@ Will read the configuration from the $PWD/.ionize.yaml file and begin an analysi
 		fmt.Printf("%s\n", analysisStatus.Status)
 
 		fmt.Println("Checking status of scans")
-		report, err := cli.GetReport(id, team, project)
+		report, err := cli.GetAnalysisReport(id, team, project)
 		if err != nil {
 			log.Fatalf("Analysis Report request failed for %s (%s): %v", project, id, err.Error())
 		}
@@ -91,33 +91,43 @@ Will read the configuration from the $PWD/.ionize.yaml file and begin an analysi
 	},
 }
 
-func printReport(report *reports.Report) int {
+func getBranch() string {
+	branch := os.Getenv("GIT_BRANCH")
+	if branch != "" {
+		fmt.Println("Using branch from environment variable", branch)
+		return branch
+	}
+
+	branch = os.Getenv("TRAVIS_BRANCH")
+	if branch != "" {
+		fmt.Println("Using branch from travis-ci", branch)
+		return branch
+	}
+
+	//TODO: get it from git directly?
+	return ""
+}
+
+func printReport(report *reports.AnalysisReport) int {
 	for _, scanSummary := range report.ScanSummaries {
-		scanData := make(map[string]interface{})
-
-		err := json.Unmarshal(scanSummary, &scanData)
-		if err != nil {
-			log.Fatalf("Analysis Report parsing failed %v", err.Error())
-		}
-
-		fmt.Print(scanData["summary"], "...Rule Type: ")
-		fmt.Print(scanData["type"], "...")
-		if scanData["passed"].(bool) {
+		fmt.Print(scanSummary.Summary, "...Rule Type: ")
+		fmt.Print(scanSummary.Type, "...")
+		if scanSummary.Passed {
 			fmt.Print("passed")
 		} else {
 			fmt.Print("not passed")
 		}
 
-		fmt.Println("...Risk: ", scanData["risk"])
+		fmt.Println("...Risk: ", scanSummary.Risk)
 	}
 
 	if !report.Passed {
 		fmt.Println("Analysis failed on a rule")
 		return 1
-	} else {
-		fmt.Println("Analysis passed all rules")
-		return 0
 	}
+
+	fmt.Println("Analysis passed all rules")
+	return 0
 }
 
 func loadCoverage(path string) (*scanner.ExternalCoverage, error) {
@@ -135,7 +145,7 @@ func loadCoverage(path string) (*scanner.ExternalCoverage, error) {
 			return nil, fmt.Errorf("Could read coverage from coverage file %v", err.Error())
 		}
 		fmt.Println("Found coverage", value)
-		return &scanner.ExternalCoverage{value}, nil
+		return &scanner.ExternalCoverage{Value: value}, nil
 	}
 	return nil, fmt.Errorf("File does not exist %s", path)
 }
