@@ -10,14 +10,15 @@ import (
 )
 
 const (
-	scannerAnalyzeProjectEndpoint     = "v1/scanner/analyzeProject"
+	scannerAnalyzeProjectEndpoint    = "v1/scanner/analyzeProject"
 	scannerGetAnalysisStatusEndpoint = "v1/scanner/getAnalysisStatus"
-	scannerAddScanEndpoint = "v1/scanner/addScanResult"
+	scannerAddScanEndpoint           = "v1/scanner/addScanResult"
 )
 
 type analyzeRequest struct {
 	TeamID    string `json:"team_id"`
 	ProjectID string `json:"project_id"`
+	Branch    string `json:"branch,omitempty"`
 }
 
 type addScanRequest struct {
@@ -29,10 +30,14 @@ type addScanRequest struct {
 	Type      string               `json:"scan_type"`
 }
 
-func (ic *IonClient) AnalyzeProject(teamID, projectID string) (*scanner.AnalysisStatus, error) {
+func (ic *IonClient) AnalyzeProject(projectID, teamID, branch string) (*scanner.AnalysisStatus, error) {
 	request := &analyzeRequest{}
 	request.TeamID = teamID
 	request.ProjectID = projectID
+
+	if branch != "" {
+		request.Branch = branch
+	}
 
 	b, err := json.Marshal(request)
 	if err != nil {
