@@ -22,6 +22,7 @@ import (
 	"time"
 
 	"github.com/ion-channel/ionic"
+	"github.com/ion-channel/ionic/reports"
 	"github.com/ion-channel/ionic/scanner"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -86,32 +87,37 @@ Will read the configuration from the $PWD/.ionize.yaml file and begin an analysi
 			log.Fatalf("Analysis Report request failed for %s (%s): %v", project, id, err.Error())
 		}
 
-		if !report.Passed {
-			fmt.Println("Analysis failed on a rule")
-		} else {
-			fmt.Println("Analysis passed all rules")
-		}
-
-		for _, scanSummary := range report.ScanSummaries {
-			scanData := make(map[string]interface{})
-
-			err := json.Unmarshal(scanSummary, &scanData)
-			if err != nil {
-				log.Fatalf("Analysis Report request failed for %s (%s): %v", project, id, err.Error())
-			}
-
-			fmt.Print(scanData["summary"], "...Rule Type: ")
-			fmt.Print(scanData["type"], "...")
-			if scanData["passed"].(bool) {
-				fmt.Print("passed")
-			} else {
-				fmt.Print("not passed")
-			}
-
-			fmt.Println("...Risk: ", scanData["risk"])
-		}
-
+		os.Exit(printReport(report))
 	},
+}
+
+func printReport(report *reports.Report) int {
+	for _, scanSummary := range report.ScanSummaries {
+		scanData := make(map[string]interface{})
+
+		err := json.Unmarshal(scanSummary, &scanData)
+		if err != nil {
+			log.Fatalf("Analysis Report parsing failed %v", err.Error())
+		}
+
+		fmt.Print(scanData["summary"], "...Rule Type: ")
+		fmt.Print(scanData["type"], "...")
+		if scanData["passed"].(bool) {
+			fmt.Print("passed")
+		} else {
+			fmt.Print("not passed")
+		}
+
+		fmt.Println("...Risk: ", scanData["risk"])
+	}
+
+	if !report.Passed {
+		fmt.Println("Analysis failed on a rule")
+		return 1
+	} else {
+		fmt.Println("Analysis passed all rules")
+		return 0
+	}
 }
 
 func loadCoverage(path string) (*scanner.ExternalCoverage, error) {
