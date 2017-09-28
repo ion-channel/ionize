@@ -1,8 +1,0 @@
-#key: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJqdGkiOiIwOTYzNTQzOS0wY2EyLTQ2NDgtOWU0Ny00NzhhZjdiMTA4NTAiLCJzdWIiOiI4ODVkOWE0MC0wMWU5LTRmZTYtYTk1NS0wMTVkYjgzOGU3NzYifQ.zDHWmzvnEaRxsK1J1XG6_tKMAdg0w4Ct3PEE9JczFY4
-key: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJqdGkiOiI0ZjgxZjQwOC04Mjk4LTQ3NWItODNhNC04YmJhNmEyNTNlYTYiLCJzdWIiOiJmODYzNjQ0NS1hMWFiLTQzNGItODdlZi0zMjlhYjdhYmEzN2UifQ.uuTUUhdoNWbdrtdC480NvNy1IAqONZfFcpbLZwSbAyY
-api: https://api.test.ionchannel.io/
-#team: cf47e4d1-1926-4990-8ef8-f326be59d6fc
-team: 646fa3e5-e274-4884-aef2-1d47f029c289
-#project: bccae6d2-3c3c-44d4-8172-a3959e3bbb3b
-project: d8cc9e66-da92-4d50-9d0b-4c17cacc7c4b
-coverage: 80
