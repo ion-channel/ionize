@@ -130,10 +130,8 @@ func loadCoverage(path string) (*scanner.ExternalCoverage, error) {
 		}
 		fmt.Println("Found coverage", value)
 		return &scanner.ExternalCoverage{value}, nil
-	} else {
-		return nil, fmt.Errorf("File does not exist %s", path)
 	}
-	return nil, nil
+	return nil, fmt.Errorf("File does not exist %s", path)
 }
 
 func init() {
