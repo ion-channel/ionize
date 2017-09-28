@@ -18,6 +18,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"os"
 	"time"
 
 	"github.com/ion-channel/ionic"
@@ -52,12 +53,16 @@ Will read the configuration from the $PWD/.ionize.yaml file and begin an analysi
 		}
 		id := analysisStatus.ID
 
-		value := viper.GetFloat64("coverage")
-		if value != 0.0 {
+		if viper.GetString("coverage") != "" {
+			coverage, err := loadCoverage(viper.GetString("coverage"))
+			if err != nil {
+				log.Fatalf("Analysis request failed for %s: %v", project, err.Error())
+			}
+
 			fmt.Println("Adding external coverage scan data")
-			coverage := scanner.ExternalCoverage{value}
+
 			scan := scanner.ExternalScan{}
-			scan.Coverage = &coverage
+			scan.Coverage = coverage
 			analysisStatus, err = cli.AddScanResult(id, team, project, "accepted", "coverage", scan)
 			if err != nil {
 				log.Fatalf("Analysis Report request failed for %s: %v", project, err.Error())
@@ -107,6 +112,28 @@ Will read the configuration from the $PWD/.ionize.yaml file and begin an analysi
 		}
 
 	},
+}
+
+func loadCoverage(path string) (*scanner.ExternalCoverage, error) {
+	if _, err := os.Stat(path); !os.IsNotExist(err) {
+		fmt.Println("Reading coverage value from", path)
+		var value float64
+		f, err := os.Open(path)
+		defer f.Close()
+		if err != nil {
+			return nil, fmt.Errorf("Could not open coverage file %v", err.Error())
+		}
+
+		_, err = fmt.Fscanln(f, &value)
+		if err != nil {
+			return nil, fmt.Errorf("Could read coverage from coverage file %v", err.Error())
+		}
+		fmt.Println("Found coverage", value)
+		return &scanner.ExternalCoverage{value}, nil
+	} else {
+		return nil, fmt.Errorf("File does not exist %s", path)
+	}
+	return nil, nil
 }
 
 func init() {
