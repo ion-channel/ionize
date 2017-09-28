@@ -22,6 +22,11 @@ import (
 	"github.com/spf13/viper"
 )
 
+const (
+	KEY = "IONCHANNEL_SECRET_KEY"
+	API = "IONCHANNEL_ENDPOINT_URL"
+)
+
 var cfgFile string
 
 // RootCmd represents the base command when called without any subcommands
@@ -70,7 +75,8 @@ func initConfig() {
 		viper.SetConfigName(".ionize")
 	}
 
-	viper.AutomaticEnv() // read in environment variables that match
+	viper.BindEnv("key", KEY)
+	viper.BindEnv("api", API)
 
 	viper.SetDefault("api", "https://api.ionchannel.io")
 	// If a config file is found, read it in.
