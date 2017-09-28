@@ -1,5 +1,5 @@
-hash: f088e28414c1ebcc638f087cc45fd0efeb771cf7fb1eb4458804d183267f8e7c
-updated: 2017-09-27T09:53:14.633108152-07:00
+hash: 4e5194a67160c8d57d6093b93dac389ac3006f7e212eef7954229bb8f96cd9b6
+updated: 2017-09-28T12:03:02.088271779-07:00
 imports:
 - name: github.com/fsnotify/fsnotify
   version: 4da3e2cfbabc9f751898f250b49f2439785783a1
@@ -17,7 +17,7 @@ imports:
 - name: github.com/inconshreveable/mousetrap
   version: 76626ae9c91c4f2a10f34cad8ce83ea42c93bb75
 - name: github.com/ion-channel/ionic
-  version: 30834e92981a5dcedd6e90206c2e042a8c0f86d5
+  version: 049f271beb4647c8af5aa8b5eccdabe58abed94b
   subpackages:
   - analysis
   - events
@@ -27,6 +27,7 @@ imports:
   - rules
   - rulesets
   - scanner
+  - scans
   - teams
   - users
   - vulnerabilities
