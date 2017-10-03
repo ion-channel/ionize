@@ -79,9 +79,6 @@ Will read the configuration from the $PWD/.ionize.yaml file and begin an analysi
 			}
 
 			fmt.Println("Adding external vulnerabilities scan data")
-
-			// scan := scanner.ExternalScan{}
-			// scan.Vulnerabilities = vulnerabilities
 			analysisStatus, err = cli.AddScanResult(id, team, project, "accepted", "vulnerability", *scan)
 			if err != nil {
 				log.Fatalf("Analysis Report request failed for %s: %v", project, err.Error())
