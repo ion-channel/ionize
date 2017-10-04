@@ -1,5 +1,5 @@
-hash: 4e5194a67160c8d57d6093b93dac389ac3006f7e212eef7954229bb8f96cd9b6
-updated: 2017-09-28T12:03:02.088271779-07:00
+hash: cf2df84b11f8af4e389fd6c5834bd2cba7d8af75848511fe6e9c8a4a61c40ada
+updated: 2017-10-03T14:33:01.293255-07:00
 imports:
 - name: github.com/fsnotify/fsnotify
   version: 4da3e2cfbabc9f751898f250b49f2439785783a1
@@ -17,7 +17,7 @@ imports:
 - name: github.com/inconshreveable/mousetrap
   version: 76626ae9c91c4f2a10f34cad8ce83ea42c93bb75
 - name: github.com/ion-channel/ionic
-  version: 049f271beb4647c8af5aa8b5eccdabe58abed94b
+  version: c82cb426b7878f850eba9a8aed1753788118ce6a
   subpackages:
   - analysis
   - events
@@ -36,19 +36,19 @@ imports:
 - name: github.com/mitchellh/mapstructure
   version: d0303fe809921458f417bcf828397a65db30a7e4
 - name: github.com/pelletier/go-toml
-  version: 16398bac157da96aa88f98a2df640c7f32af1da2
+  version: 2009e44b6f182e34d8ce081ac2767622937ea3d4
 - name: github.com/spf13/afero
-  version: ee1bd8ee15a1306d1f9201acc41ef39cd9f99a1b
+  version: 8a6ade7159a9b7fff5d2feac091c425177ac1b28
   subpackages:
   - mem
 - name: github.com/spf13/cast
   version: acbeb36b902d72a7a4c18e8f3241075e7ab763e4
 - name: github.com/spf13/cobra
-  version: b78744579491c1ceeaaa3b40205e56b0591b93a3
+  version: 0dacccfbaabc71b872087c1719c5380d3e185173
 - name: github.com/spf13/jwalterweatherman
   version: 12bd96e66386c1960ab0f74ced1362f66f552f7b
 - name: github.com/spf13/pflag
-  version: 7aff26db30c1be810f9de5038ec5ef96ac41fd7c
+  version: be7121dd7a937a85e1e4b1ddda6a3edce3466110
 - name: github.com/spf13/viper
   version: 25b30aa063fc18e48662b86996252eabdcf2f0c7
 - name: golang.org/x/sys

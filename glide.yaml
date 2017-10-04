@@ -4,4 +4,4 @@ import:
 - package: github.com/spf13/viper
   version: ~1.0.0
 - package: github.com/ion-channel/ionic
-  version: 049f271
+  version: c82cb42

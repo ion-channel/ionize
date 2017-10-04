@@ -15,7 +15,9 @@
 package cmd
 
 import (
+	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"os"
 	"time"
@@ -65,6 +67,19 @@ Will read the configuration from the $PWD/.ionize.yaml file and begin an analysi
 			scan := scanner.ExternalScan{}
 			scan.Coverage = coverage
 			analysisStatus, err = cli.AddScanResult(id, team, project, "accepted", "coverage", scan)
+			if err != nil {
+				log.Fatalf("Analysis Report request failed for %s: %v", project, err.Error())
+			}
+		}
+
+		if viper.GetString("vulnerabilities") != "" {
+			scan, err := loadVulnerabilities(viper.GetString("vulnerabilities"))
+			if err != nil {
+				log.Fatalf("Analysis request failed for %s: %v", project, err.Error())
+			}
+
+			fmt.Println("Adding external vulnerabilities scan data")
+			analysisStatus, err = cli.AddScanResult(id, team, project, "accepted", "vulnerability", *scan)
 			if err != nil {
 				log.Fatalf("Analysis Report request failed for %s: %v", project, err.Error())
 			}
@@ -128,6 +143,27 @@ func printReport(report *reports.AnalysisReport) int {
 
 	fmt.Println("Analysis passed all rules")
 	return 0
+}
+
+func loadVulnerabilities(path string) (*scanner.ExternalScan, error) {
+	if _, err := os.Stat(path); !os.IsNotExist(err) {
+		fmt.Println("Reading coverage value from", path)
+
+		raw, err := ioutil.ReadFile(path)
+		if err != nil {
+			return nil, fmt.Errorf("Could not open vulnerabilities file %v", err.Error())
+		}
+
+		var scan = scanner.ExternalScan{}
+		err = json.Unmarshal(raw, &scan)
+		if err != nil {
+			return nil, fmt.Errorf("Could not parse vulnerabilities file %v", err.Error())
+		}
+
+		fmt.Println("Found and loaded vulnerabilities file")
+		return &scan, nil
+	}
+	return nil, fmt.Errorf("File does not exist %s", path)
 }
 
 func loadCoverage(path string) (*scanner.ExternalCoverage, error) {
