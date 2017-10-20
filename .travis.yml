@@ -12,3 +12,16 @@ notifications:
   slack:
     rooms:
       - ionchannel:judViUieHy4ppRX1vYhok1HK#build
+
+before_deploy: make release
+
+deploy:
+  - provider: s3
+    bucket: public.ionchannel.io
+    region: us-east-1
+    skip_cleanup: true
+    upload-dir: files/ionize
+    local_dir: deploy
+    acl: public_read
+    on:
+      tags: true

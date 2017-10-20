@@ -39,9 +39,9 @@ install:  ## Installs the binary
 	$(GOCMD) install
 
 release:  ## Build binaiers for the primary OS'
-	GOOS=linux $(GOBUILD) -ldflags "-X main.buildTime=$(DATE) -X main.appVersion=$(VERSION)" -o $(APP)-linux .
-	GOOS=darwin $(GOBUILD) -ldflags "-X main.buildTime=$(DATE) -X main.appVersion=$(VERSION)" -o $(APP)-darwin .
-	GOOS=windows $(GOBUILD) -ldflags "-X main.buildTime=$(DATE) -X main.appVersion=$(VERSION)" -o $(APP)-windows .
+	GOOS=linux $(GOBUILD) -ldflags "-X main.buildTime=$(DATE) -X main.appVersion=$(VERSION)" -o deploy/linux/$(APP) .
+	GOOS=darwin $(GOBUILD) -ldflags "-X main.buildTime=$(DATE) -X main.appVersion=$(VERSION)" -o deploy/darwin/$(APP) .
+	GOOS=windows $(GOBUILD) -ldflags "-X main.buildTime=$(DATE) -X main.appVersion=$(VERSION)" -o deploy/windows/$(APP).exe .
 
 test: unit_test acceptance_test  ## Runs all available tests
 
