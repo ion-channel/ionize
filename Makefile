@@ -1,4 +1,7 @@
-# Go Commands
+# System Setup
+SHELL = bash
+
+# Go Stuff
 GOCMD=go
 GOBUILD=$(GOCMD) build
 GOCLEAN=$(GOCMD) clean
