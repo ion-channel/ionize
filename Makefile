@@ -29,7 +29,7 @@ all: test build
 
 .PHONY: build
 build: fmt ## Build the project
-	$(GOBUILD) -ldflags "-X main.buildTime=$(DATE) -X main.appVersion=$(VERSION)" -o $(APP) .
+	CGO_ENABLED=$(CGO_ENABLED) GOOS=$(GOOS) $(GOBUILD) -ldflags "-X main.buildTime=$(DATE) -X main.appVersion=$(BUILD_VERSION)" -o $(APP) .
 
 .PHONY: clean
 clean:  ## Clean out all generated files
