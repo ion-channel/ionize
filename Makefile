@@ -34,9 +34,10 @@ build: fmt ## Build the project
 .PHONY: clean
 clean:  ## Clean out all generated files
 	-@$(GOCLEAN)
-	-@rm $(APP)-linux
-	-@rm $(APP)-darwin
-	-@rm $(APP)-windows
+	-@rm -f output.txt
+	-@rm -f $(APP)-linux $(APP)-darwin $(APP)-windows
+	-@rm -rf coverage
+	-@rm -f coverage.txt
 
 .PHONY: coverage
 coverage:  ## Generates the code coverage from all the tests
