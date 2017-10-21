@@ -13,7 +13,7 @@ notifications:
     rooms:
       - ionchannel:judViUieHy4ppRX1vYhok1HK#build
 
-before_deploy: make release
+before_deploy: make crosscompile
 
 deploy:
   - provider: s3

@@ -52,6 +52,12 @@ coverage_compfriendly:  ## Generates the code coverage in a computer friendly ma
 	@tail -q -n +2 $(COVERAGE_DIR)/*.out >> $(COVERAGE_DIR)/tmp/full.out
 	@$(GOCMD) tool cover -func=$(COVERAGE_DIR)/tmp/full.out | tail -n 1 | sed -e 's/^.*statements)[[:space:]]*//' -e 's/%//'
 
+.PHONY: crosscompile
+crosscompile:  ## Build the binaries for the primary OS'
+	GOOS=linux $(GOBUILD) -ldflags "-X main.buildTime=$(DATE) -X main.appVersion=$(BUILD_VERSION)" -o $(APP)-linux .
+	GOOS=darwin $(GOBUILD) -ldflags "-X main.buildTime=$(DATE) -X main.appVersion=$(BUILD_VERSION)" -o $(APP)-darwin .
+	GOOS=windows $(GOBUILD) -ldflags "-X main.buildTime=$(DATE) -X main.appVersion=$(BUILD_VERSION)" -o $(APP)-windows.exe .
+
 .PHONY: help
 help:  ## Show This Help
 	@for line in $$(cat Makefile | grep "##" | grep -v "grep" | sed  "s/:.*##/:/g" | sed "s/\ /!/g"); do verb=$$(echo $$line | cut -d ":" -f 1); desc=$$(echo $$line | cut -d ":" -f 2 | sed "s/!/\ /g"); printf "%-30s--%s\n" "$$verb" "$$desc"; done
@@ -59,11 +65,6 @@ help:  ## Show This Help
 .PHONY: install
 install:  ## Installs the binary
 	$(GOCMD) install
-
-release:  ## Build binaiers for the primary OS'
-	GOOS=linux $(GOBUILD) -ldflags "-X main.buildTime=$(DATE) -X main.appVersion=$(VERSION)" -o deploy/linux/$(APP) .
-	GOOS=darwin $(GOBUILD) -ldflags "-X main.buildTime=$(DATE) -X main.appVersion=$(VERSION)" -o deploy/darwin/$(APP) .
-	GOOS=windows $(GOBUILD) -ldflags "-X main.buildTime=$(DATE) -X main.appVersion=$(VERSION)" -o deploy/windows/$(APP).exe .
 
 .PHONY: test
 test: unit_test acceptance_test  ## Runs all available tests
