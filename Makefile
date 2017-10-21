@@ -7,17 +7,21 @@ GOBUILD=$(GOCMD) build
 GOCLEAN=$(GOCMD) clean
 GOTEST=$(GOCMD) test -v $(shell $(GOCMD) list ./... | grep -v /vendor/)
 GOFMT=go fmt
-
-# Optional User Provided Parameters
 CGO_ENABLED ?= 0
 GOOS ?= $(shell uname -s | tr '[:upper:]' '[:lower:]')
-TRAVIS_BUILD_NUMBER ?= 1
-BUILD_NUMBER ?= $(TRAVIS_BUILD_NUMBER)
 
-# Calculated values for building
-DATE := $(shell date -u +%Y-%m-%d%Z%H:%M:%S)
+# General Vars
 APP := $(shell basename $(PWD) | tr '[:upper:]' '[:lower:]')
-VERSION := $(shell cat VERSION)-$(BUILD_NUMBER)
+DATE := $(shell date -u +%Y-%m-%d%Z%H:%M:%S)
+VERSION := 0.1.0
+COVERAGE_DIR=coverage
+
+TRAVIS_BUILD_NUMBER ?= 1
+TRAVIS_COMMIT ?= $(shell git rev-parse HEAD)
+
+BUILD_NUMBER ?= $(TRAVIS_BUILD_NUMBER)
+BUILD_VERSION := $(VERSION)-$(BUILD_NUMBER)
+GIT_COMMIT_HASH ?= $(TRAVIS_COMMIT)
 
 
 .PHONY: all
