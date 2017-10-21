@@ -67,15 +67,11 @@ install:  ## Installs the binary
 	$(GOCMD) install
 
 .PHONY: test
-test: unit_test acceptance_test  ## Runs all available tests
+test: unit_test  ## Runs all available tests
 
 .PHONY: unit_test
 unit_test:  ## Run unit tests
 	$(GOTEST)
-
-.PHONY: acceptance_test
-acceptance_test:  ## Run acceptance tests
-	cd ext/acceptance_tests && gem install bundler && bundle install && bundle exec cucumber -t ~@expected_failure
 
 .PHONY: fmt
 fmt:  ## Run go fmt
