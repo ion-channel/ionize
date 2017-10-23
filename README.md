@@ -18,7 +18,7 @@ go get github.com/ion-channel/ionize
 
 # Versioning
 
-The proejct will be versioned in accordance with [Semver 2.0.0](http://semver.org).  See the [releases](https://github.com/ion-channel/ionic/releases) section for the latest version.  Until version 1.0.0 the project is considered to be unstable.
+The project will be versioned in accordance with [Semver 2.0.0](http://semver.org).  See the [releases](https://github.com/ion-channel/ionic/releases) section for the latest version.  Until version 1.0.0 the project is considered to be unstable.
 
 # License
 This project is distributed under the [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0).  See [LICENSE.md](./LICENSE.md) for more information.
