@@ -1,19 +1,19 @@
 language: go
+
 go:
   - 1.8
   - tip
+
 script:
-  - make unit_test
-  - make build
-  - make install
-  - make acceptance_test
+  - make unit_test build install
+
 notifications:
   email: false
   slack:
     rooms:
       - ionchannel:judViUieHy4ppRX1vYhok1HK#build
 
-before_deploy: make release
+before_deploy: make crosscompile
 
 deploy:
   - provider: s3
