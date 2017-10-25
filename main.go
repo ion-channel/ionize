@@ -7,7 +7,16 @@ import (
 	"github.com/ion-channel/ionize/cmd"
 )
 
+var (
+	appVersion string
+)
+
 func main() {
+	cmd.Version = appVersion
+	if appVersion == "" {
+		cmd.Version = "local-build"
+	}
+
 	err := cmd.RootCmd.Execute()
 	if err != nil {
 		fmt.Println(err)

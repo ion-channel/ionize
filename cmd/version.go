@@ -10,11 +10,15 @@ func init() {
 	RootCmd.AddCommand(versionCmd)
 }
 
+var (
+	Version string
+)
+
 var versionCmd = &cobra.Command{
 	Use:   "version",
 	Short: "Print the version number of Ionize",
 	Long:  `All software has versions. This is mine`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("Ionize v0.1.0")
+		fmt.Printf("Ionize %v\n", Version)
 	},
 }

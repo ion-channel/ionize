@@ -13,7 +13,7 @@ GOOS ?= $(shell uname -s | tr '[:upper:]' '[:lower:]')
 # General Vars
 APP := $(shell basename $(PWD) | tr '[:upper:]' '[:lower:]')
 DATE := $(shell date -u +%Y-%m-%d%Z%H:%M:%S)
-VERSION := 0.1.0
+VERSION := v0.1.1
 COVERAGE_DIR=coverage
 
 TRAVIS_BUILD_NUMBER ?= 1
