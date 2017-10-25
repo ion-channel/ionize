@@ -1,7 +1,16 @@
 package main
 
-import "github.com/ion-channel/ionize/cmd"
+import (
+	"fmt"
+	"os"
+
+	"github.com/ion-channel/ionize/cmd"
+)
 
 func main() {
-	cmd.Execute()
+	err := cmd.RootCmd.Execute()
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
 }
