@@ -25,11 +25,19 @@ perform supply chain analysis for a project.
 }
 
 func init() {
-	cobra.OnInitialize(initConfig)
+	cobra.OnInitialize(initDefaults, initEnvs, initConfig)
 
 	// Here you will define your flags and configuration settings.
 	RootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $PWD/.ionize.yaml)")
+}
 
+func initDefaults() {
+	viper.SetDefault("api", "https://api.ionchannel.io")
+}
+
+func initEnvs() {
+	viper.BindEnv("key", KEY)
+	viper.BindEnv("api", API)
 }
 
 // initConfig reads in config file and ENV variables if set.
@@ -51,10 +59,6 @@ func initConfig() {
 		viper.SetConfigName(".ionize")
 	}
 
-	viper.BindEnv("key", KEY)
-	viper.BindEnv("api", API)
-
-	viper.SetDefault("api", "https://api.ionchannel.io")
 	// If a config file is found, read it in.
 	if err := viper.ReadInConfig(); err == nil {
 		fmt.Println("Using config file:", viper.ConfigFileUsed())
