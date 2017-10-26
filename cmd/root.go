@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"fmt"
-	"os"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -40,17 +39,11 @@ func initEnvs() {
 }
 
 func initConfig() {
+	viper.SetConfigType("yaml")
+
+	viper.SetConfigFile(".ionize.yaml")
 	if cfgFile != "" {
 		viper.SetConfigFile(cfgFile)
-	} else {
-		dir, err := os.Getwd()
-		if err != nil {
-			fmt.Println(err)
-			os.Exit(1)
-		}
-
-		viper.AddConfigPath(dir)
-		viper.SetConfigName(".ionize")
 	}
 
 	if err := viper.ReadInConfig(); err == nil {
