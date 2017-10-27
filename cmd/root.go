@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"fmt"
-	"os"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -24,48 +23,31 @@ perform supply chain analysis for a project.
 `,
 }
 
-// Execute adds all child commands to the root command and sets flags appropriately.
-// This is called by main.main(). It only needs to happen once to the rootCmd.
-func Execute() {
-	if err := RootCmd.Execute(); err != nil {
-		fmt.Println(err)
-		os.Exit(1)
-	}
-}
-
 func init() {
-	cobra.OnInitialize(initConfig)
+	cobra.OnInitialize(initDefaults, initEnvs, initConfig)
 
-	// Here you will define your flags and configuration settings.
 	RootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $PWD/.ionize.yaml)")
-
 }
 
-// initConfig reads in config file and ENV variables if set.
-func initConfig() {
-	if cfgFile != "" {
-		// Use config file from the flag.
-		viper.SetConfigFile(cfgFile)
-	} else {
-		// Find home directory.
-		dir, err := os.Getwd()
-		if err != nil {
-			fmt.Println(err)
-			os.Exit(1)
-		}
+func initDefaults() {
+	viper.SetDefault("api", "https://api.ionchannel.io")
+}
 
-		// Search config in pwd directory with name ".ionize" (without extension).
-		viper.AddConfigPath(dir)
-		// viper.AddConfigPath(".")
-		viper.SetConfigName(".ionize")
-	}
-
+func initEnvs() {
 	viper.BindEnv("key", KEY)
 	viper.BindEnv("api", API)
+}
 
-	viper.SetDefault("api", "https://api.ionchannel.io")
-	// If a config file is found, read it in.
-	if err := viper.ReadInConfig(); err == nil {
-		fmt.Println("Using config file:", viper.ConfigFileUsed())
+func initConfig() {
+	viper.SetConfigType("yaml")
+
+	viper.SetConfigFile(".ionize.yaml")
+	if cfgFile != "" {
+		viper.SetConfigFile(cfgFile)
+	}
+
+	err := viper.ReadInConfig()
+	if err != nil {
+		fmt.Printf("Failed reading config: %v", err.Error())
 	}
 }

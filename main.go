@@ -1,7 +1,25 @@
 package main
 
-import "github.com/ion-channel/ionize/cmd"
+import (
+	"fmt"
+	"os"
+
+	"github.com/ion-channel/ionize/cmd"
+)
+
+var (
+	appVersion string
+)
 
 func main() {
-	cmd.Execute()
+	cmd.Version = appVersion
+	if appVersion == "" {
+		cmd.Version = "local-build"
+	}
+
+	err := cmd.RootCmd.Execute()
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
 }
