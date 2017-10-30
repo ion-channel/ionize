@@ -1,7 +1,8 @@
 package: github.com/ion-channel/ionize
 import:
 - package: github.com/spf13/cobra
+  version: 0dacccfbaabc71b872087c1719c5380d3e185173
 - package: github.com/spf13/viper
-  version: ~1.0.0
+  version: 25b30aa063fc18e48662b86996252eabdcf2f0c7
 - package: github.com/ion-channel/ionic
-  version: c82cb42
+  version: v0.5.1

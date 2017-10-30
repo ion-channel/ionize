@@ -2,6 +2,8 @@ package cmd
 
 import (
 	"fmt"
+	"io"
+	"os"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -12,7 +14,10 @@ const (
 	API = "IONCHANNEL_ENDPOINT_URL"
 )
 
-var cfgFile string
+var (
+	output  io.Writer
+	cfgFile string
+)
 
 // RootCmd represents the base command when called without any subcommands
 var RootCmd = &cobra.Command{
@@ -24,6 +29,8 @@ perform supply chain analysis for a project.
 }
 
 func init() {
+	output = os.Stdout
+
 	cobra.OnInitialize(initDefaults, initEnvs, initConfig)
 
 	RootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $PWD/.ionize.yaml)")
