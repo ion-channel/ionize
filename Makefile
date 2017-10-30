@@ -35,7 +35,7 @@ build: fmt ## Build the project
 clean:  ## Clean out all generated files
 	-@$(GOCLEAN)
 	-@rm -f output.txt
-	-@rm -f $(APP)-linux $(APP)-darwin $(APP)-windows
+	-@rm -rf deploy
 	-@rm -rf coverage
 	-@rm -f coverage.txt
 
@@ -54,9 +54,9 @@ coverage_compfriendly:  ## Generates the code coverage in a computer friendly ma
 
 .PHONY: crosscompile
 crosscompile:  ## Build the binaries for the primary OS'
-	GOOS=linux $(GOBUILD) -ldflags "-X main.buildTime=$(DATE) -X main.appVersion=$(BUILD_VERSION)" -o $(APP)-linux .
-	GOOS=darwin $(GOBUILD) -ldflags "-X main.buildTime=$(DATE) -X main.appVersion=$(BUILD_VERSION)" -o $(APP)-darwin .
-	GOOS=windows $(GOBUILD) -ldflags "-X main.buildTime=$(DATE) -X main.appVersion=$(BUILD_VERSION)" -o $(APP)-windows.exe .
+	GOOS=linux $(GOBUILD) -ldflags "-X main.buildTime=$(DATE) -X main.appVersion=$(BUILD_VERSION)" -o deploy/linux/$(APP) .
+	GOOS=darwin $(GOBUILD) -ldflags "-X main.buildTime=$(DATE) -X main.appVersion=$(BUILD_VERSION)" -o deploy/darwin/$(APP) .
+	GOOS=windows $(GOBUILD) -ldflags "-X main.buildTime=$(DATE) -X main.appVersion=$(BUILD_VERSION)" -o deploy/windows/$(APP).exe .
 
 .PHONY: help
 help:  ## Show This Help
