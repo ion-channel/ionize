@@ -1,6 +1,6 @@
 # ionize
-[![Build Status](https://travis-ci.com/ion-channel/ionize.svg?token=CUU4bzkwPEkK9kQykvyt&branch=master)](https://travis-ci.com/ion-channel/ionize)
-[![Go Reportcard](https://goreportcard.com/badge/github.com/ion-channel/ionize)](https://goreportcard.com/report/github.com/ion-channel/ionize)
+[![Build Status](https://travis-ci.org/ion-channel/ionize.svg?branch=master)](https://travis-ci.org/ion-channel/ionize)
+[![Go Report Card](https://goreportcard.com/badge/github.com/ion-channel/ionize)](https://goreportcard.com/report/github.com/ion-channel/ionize)
 [![GoDoc](https://godoc.org/github.com/ion-channel/ionize?status.svg)](https://godoc.org/github.com/ion-channel/ionize)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/ion-channel/ionize/blob/master/LICENSE.md)
 [![Release](https://img.shields.io/github/release/ion-channel/ionize.svg)](https://github.com/ion-channel/ionize/releases/latest)
