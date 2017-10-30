@@ -54,9 +54,9 @@ coverage_compfriendly:  ## Generates the code coverage in a computer friendly ma
 
 .PHONY: crosscompile
 crosscompile:  ## Build the binaries for the primary OS'
-	GOOS=linux $(GOBUILD) -ldflags "-X main.buildTime=$(DATE) -X main.appVersion=$(BUILD_VERSION)" -o deploy/linux/$(APP) .
-	GOOS=darwin $(GOBUILD) -ldflags "-X main.buildTime=$(DATE) -X main.appVersion=$(BUILD_VERSION)" -o deploy/darwin/$(APP) .
-	GOOS=windows $(GOBUILD) -ldflags "-X main.buildTime=$(DATE) -X main.appVersion=$(BUILD_VERSION)" -o deploy/windows/$(APP).exe .
+	GOOS=linux $(GOBUILD) -ldflags "-X main.buildTime=$(DATE) -X main.appVersion=$(BUILD_VERSION)" -o deploy/linux/bin/$(APP) .
+	GOOS=darwin $(GOBUILD) -ldflags "-X main.buildTime=$(DATE) -X main.appVersion=$(BUILD_VERSION)" -o deploy/darwin/bin/$(APP) .
+	GOOS=windows $(GOBUILD) -ldflags "-X main.buildTime=$(DATE) -X main.appVersion=$(BUILD_VERSION)" -o deploy/windows/bin/$(APP).exe .
 
 .PHONY: help
 help:  ## Show This Help
