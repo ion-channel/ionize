@@ -43,6 +43,14 @@ func (r *Results) UnmarshalJSON(b []byte) error {
 		}
 
 		r.Data = a
+	case "community":
+		var c []CommunityResults
+		err := json.Unmarshal(tr.RawData, &c)
+		if err != nil {
+			return fmt.Errorf("failed to unmarshall community results: %v", err)
+		}
+
+		r.Data = c
 	case "coverage", "external_coverage":
 		var c CoverageResults
 		err := json.Unmarshal(tr.RawData, &c)
@@ -108,7 +116,7 @@ func (r *Results) UnmarshalJSON(b []byte) error {
 
 		r.Data = v
 	default:
-		return fmt.Errorf("invalid results type")
+		return fmt.Errorf("unsupported results type found: %v", tr.Type)
 	}
 
 	return nil
@@ -121,6 +129,14 @@ type AboutYMLResults struct {
 	Message string `json:"message" xml:"message"`
 	Valid   bool   `json:"valid" xml:"valid"`
 	Content string `json:"content" xml:"content"`
+}
+
+// CommunityResults represents the data collected from a community scan.  It
+// represents all known data regarding the open community of a software project
+type CommunityResults struct {
+	Committers int    `json:"committers" xml:"committers"`
+	Name       string `json:"name" xml:"name"`
+	URL        string `json:"url" xml:"url"`
 }
 
 // CoverageResults represents the data collected from a code coverage scan.  It
@@ -153,8 +169,8 @@ type DependencyResults struct {
 // DifferenceResults represents the checksum of a project.  It includes a checksum
 // and flag indicating if there was a difference detected within that last 5 scans
 type DifferenceResults struct {
-	Checksum   string `json:"checksum"`
-	Difference bool   `json:"difference"`
+	Checksum   string `json:"checksum" xml:"checksum"`
+	Difference bool   `json:"difference" xml:"difference"`
 }
 
 // EcosystemResults represents the data collected from an ecosystems scan.  It
@@ -171,10 +187,10 @@ type EcosystemResults struct {
 // vulnerability scan.  It includes the number of each vulnerability criticality
 // seen within the project.
 type ExternalVulnerabilitiesResults struct {
-	Critical int `json:"critical"`
-	High     int `json:"high"`
-	Medium   int `json:"medium"`
-	Low      int `json:"low"`
+	Critical int `json:"critical" xml:"critical"`
+	High     int `json:"high" xml:"high"`
+	Medium   int `json:"medium" xml:"medium"`
+	Low      int `json:"low" xml:"low"`
 }
 
 // LicenseResults represents the data colleced from a license scan.  It

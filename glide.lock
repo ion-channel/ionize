@@ -1,5 +1,5 @@
-hash: 57a5db1b76c159f1cce93725a8ea5a143a96187023c691ecc9b137259f214008
-updated: 2017-10-29T20:20:49.920292-07:00
+hash: e08563bd9e78cda3a9146b744a39c3ee9e98ca3bdb1b32b79b7edeebfb5e0ed0
+updated: 2017-10-31T09:57:38.710799-07:00
 imports:
 - name: github.com/fsnotify/fsnotify
   version: 4da3e2cfbabc9f751898f250b49f2439785783a1
@@ -17,11 +17,12 @@ imports:
 - name: github.com/inconshreveable/mousetrap
   version: 76626ae9c91c4f2a10f34cad8ce83ea42c93bb75
 - name: github.com/ion-channel/ionic
-  version: eff274d21a61922b944fac213b8ff614a3b82496
+  version: ae5379637a01bbd1f4f387700ef3e73925e74ce4
   subpackages:
   - analysis
   - events
   - pagination
+  - products
   - projects
   - reports
   - rules
@@ -52,11 +53,11 @@ imports:
 - name: github.com/spf13/viper
   version: 25b30aa063fc18e48662b86996252eabdcf2f0c7
 - name: golang.org/x/sys
-  version: 661970f62f5897bc0cd5fdca7e087ba8a98a8fa1
+  version: 95c6576299259db960f6c5b9b69ea52422860fce
   subpackages:
   - unix
 - name: golang.org/x/text
-  version: 6eab0e8f74e86c598ec3b6fad4888e0c11482d48
+  version: 3cfc6c0d6bf80d724d98c26c4822f4a35d37598e
   subpackages:
   - encoding
   - encoding/charmap
