@@ -88,4 +88,5 @@ vet: ## Run go vet
 .PHONY: lint
 lint: ## Run golint
 	@echo "linting..."
+	@$(GOCMD) install github.com/golang/lint
 	@$(GOLINT) -set_exit_status `$(GOLIST) ./...`
