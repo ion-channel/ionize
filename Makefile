@@ -83,9 +83,9 @@ fmt:  ## Run go fmt
 .PHONY: vet
 vet: ## Run go vet
 	@echo "vetting..."
-	@$(GOVET) -v `$(GOLIST) ./...`
+	@$(GOVET) -v `$(GOLIST) ./... | grep -v vendor\/`
 
 .PHONY: lint
 lint: ## Run golint
 	@echo "linting..."
-	@$(GOLINT) -set_exit_status `$(GOLIST) ./...`
+	@$(GOLINT) -set_exit_status `$(GOLIST) ./... | grep -v vendor\/`
