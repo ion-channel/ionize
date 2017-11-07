@@ -5,6 +5,9 @@ SHELL = bash
 GOCMD=go
 GOBUILD=$(GOCMD) build
 GOCLEAN=$(GOCMD) clean
+GOLIST=$(GOCMD) list
+GOVET=$(GOCMD) vet
+GOLINT=golint
 GOTEST=$(GOCMD) test -v $(shell $(GOCMD) list ./... | grep -v /vendor/)
 GOFMT=go fmt
 CGO_ENABLED ?= 0
@@ -28,7 +31,7 @@ GIT_COMMIT_HASH ?= $(TRAVIS_COMMIT)
 all: test build
 
 .PHONY: build
-build: fmt ## Build the project
+build: fmt vet lint ## Build the project
 	CGO_ENABLED=$(CGO_ENABLED) GOOS=$(GOOS) $(GOBUILD) -ldflags "-X main.buildTime=$(DATE) -X main.appVersion=$(BUILD_VERSION)" -o $(APP) .
 
 .PHONY: clean
@@ -76,3 +79,13 @@ unit_test:  ## Run unit tests
 .PHONY: fmt
 fmt:  ## Run go fmt
 	$(GOFMT)
+
+.PHONY: vet
+vet: ## Run go vet
+	@echo "vetting..."
+	@$(GOVET) -v `$(GOLIST) ./... | grep -v vendor\/`
+
+.PHONY: lint
+lint: ## Run golint
+	@echo "linting..."
+	@$(GOLINT) -set_exit_status `$(GOLIST) ./... | grep -v vendor\/`

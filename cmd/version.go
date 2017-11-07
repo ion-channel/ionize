@@ -11,6 +11,7 @@ func init() {
 }
 
 var (
+	// Version of Ionize.
 	Version string
 )
 
