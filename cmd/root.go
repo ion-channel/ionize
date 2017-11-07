@@ -10,7 +10,7 @@ import (
 )
 
 const (
-	KEY = "IONCHANNEL_SECRET_KEY"
+	key = "IONCHANNEL_SECRET_KEY"
 	api = "IONCHANNEL_ENDPOINT_URL"
 )
 
@@ -41,7 +41,7 @@ func initDefaults() {
 }
 
 func initEnvs() {
-	viper.BindEnv("key", KEY)
+	viper.BindEnv("key", key)
 	viper.BindEnv("api", api)
 }
 
