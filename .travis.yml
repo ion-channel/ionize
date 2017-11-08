@@ -8,7 +8,7 @@ install:
   - go get -u github.com/golang/lint/golint
 
 script:
-  - make unit_test build install
+  - make fmt vet lint unit_test build install
 
 notifications:
   email: false
