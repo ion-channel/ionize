@@ -4,13 +4,12 @@ SHELL = bash
 # Go Stuff
 GOCMD=go
 GOLINTCMD=golint
-GOFMTCMD=gofmt
 GOBUILD=$(GOCMD) build
 GOCLEAN=$(GOCMD) clean
 GOLIST=$(GOCMD) list
 GOVET=$(GOCMD) vet
 GOTEST=$(GOCMD) test -v $(shell $(GOCMD) list ./... | grep -v /vendor/)
-GOFMT=go fmt
+GOFMT=$(GOCMD) fmt
 CGO_ENABLED ?= 0
 GOOS ?= $(shell uname -s | tr '[:upper:]' '[:lower:]')
 
@@ -32,7 +31,7 @@ GIT_COMMIT_HASH ?= $(TRAVIS_COMMIT)
 all: test build
 
 .PHONY: build
-build: fmt ## Build the project
+build: ## Build the project
 	CGO_ENABLED=$(CGO_ENABLED) GOOS=$(GOOS) $(GOBUILD) -ldflags "-X main.buildTime=$(DATE) -X main.appVersion=$(BUILD_VERSION)" -o $(APP) .
 
 .PHONY: clean
@@ -78,9 +77,9 @@ unit_test:  ## Run unit tests
 	$(GOTEST)
 
 .PHONY: fmt
-fmt:  ## Run gofmt
-	@echo "formatting..."
-	@$(GOFMTCMD) -l -s -w $(shell find . -type f -name '*.go' -not -path "./vendor/*")
+fmt: ## Run gofmt
+	@echo "checking formatting..."
+	@$(GOFMT) $(shell $(GOLIST) ./... | grep -v '/vendor/')
 
 .PHONY: vet
 vet: ## Run go vet
