@@ -1,8 +1,18 @@
 package: github.com/ion-channel/ionize
 import:
+- package: github.com/ion-channel/ionic
+  version: v0.10.2
+  subpackages:
+  - reports
+  - scanner
 - package: github.com/spf13/cobra
   version: 0dacccfbaabc71b872087c1719c5380d3e185173
 - package: github.com/spf13/viper
   version: 25b30aa063fc18e48662b86996252eabdcf2f0c7
-- package: github.com/ion-channel/ionic
-  version: v0.6.0
+testImport:
+- package: github.com/franela/goblin
+  version: 2fa789fd0c6b7975acbfb89a04830b4081a7b0e9
+- package: github.com/gomicro/penname
+  version: 6b7aa4333fbadc13015f856ae2e27ca2c0817cad
+- package: github.com/onsi/gomega
+  version: 00acfa9d92a386415bd235ab069c52063f925998

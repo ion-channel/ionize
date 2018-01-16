@@ -3,10 +3,13 @@ SHELL = bash
 
 # Go Stuff
 GOCMD=go
+GOLINTCMD=golint
 GOBUILD=$(GOCMD) build
 GOCLEAN=$(GOCMD) clean
+GOLIST=$(GOCMD) list
+GOVET=$(GOCMD) vet
 GOTEST=$(GOCMD) test -v $(shell $(GOCMD) list ./... | grep -v /vendor/)
-GOFMT=go fmt
+GOFMT=$(GOCMD) fmt
 CGO_ENABLED ?= 0
 GOOS ?= $(shell uname -s | tr '[:upper:]' '[:lower:]')
 
@@ -42,6 +45,20 @@ help:  ## Show This Help
 test:  ## Run all available tests
 	$(GOTEST)
 
+.PHONY: linters
+linters:  fmt vet lint  ## Run all of the linters
+
 .PHONY: fmt
-fmt:  ## Run go fmt
-	$(GOFMT)
+fmt: ## Run gofmt
+	@echo "checking formatting..."
+	@$(GOFMT) $(shell $(GOLIST) ./... | grep -v '/vendor/')
+
+.PHONY: vet
+vet: ## Run go vet
+	@echo "vetting..."
+	@$(GOVET) $(shell $(GOLIST) ./... | grep -v '/vendor/')
+
+.PHONY: lint
+lint: ## Run golint
+	@echo "linting..."
+	@$(GOLINTCMD) -set_exit_status $(shell $(GOLIST) ./... | grep -v '/vendor/')
