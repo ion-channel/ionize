@@ -44,7 +44,7 @@ func (r *Results) UnmarshalJSON(b []byte) error {
 
 		r.Data = a
 	case "community":
-		var c []CommunityResults
+		var c CommunityResults
 		err := json.Unmarshal(tr.RawData, &c)
 		if err != nil {
 			return fmt.Errorf("failed to unmarshall community results: %v", err)
@@ -145,25 +145,31 @@ type CoverageResults struct {
 	Value float64 `json:"value" xml:"value"`
 }
 
+// Dependency represents data for an individual requirement resolution
+type Dependency struct {
+	LatestVersion string `json:"latest_version" xml:"latest_version"`
+	Org           string `json:"org" xml:"org"`
+	Name          string `json:"name" xml:"name"`
+	Type          string `json:"type" xml:"type"`
+	Package       string `json:"package" xml:"package"`
+	Version       string `json:"version" xml:"version"`
+	Scope         string `json:"scope" xml:"scope"`
+}
+
+// DependencyMeta represents data for a summary of all dependencies resolved
+type DependencyMeta struct {
+	FirstDegreeCount     int `json:"first_degree_count" xml:"first_degree_count"`
+	NoVersionCount       int `json:"no_version_count" xml:"no_version_count"`
+	TotalUniqueCount     int `json:"total_unique_count" xml:"total_unique_count"`
+	UpdateAvailableCount int `json:"update_available_count" xml:"update_available_count"`
+}
+
 // DependencyResults represents the data collected from a dependency scan.  It
 // includes a list of the dependencies seen and meta data counts about those
 // dependencies seen.
 type DependencyResults struct {
-	Dependencies []struct {
-		LatestVersion string `json:"latest_version" xml:"latest_version"`
-		Org           string `json:"org" xml:"org"`
-		Name          string `json:"name" xml:"name"`
-		Type          string `json:"type" xml:"type"`
-		Package       string `json:"package" xml:"package"`
-		Version       string `json:"version" xml:"version"`
-		Scope         string `json:"scope" xml:"scope"`
-	} `json:"dependencies" xml:"dependencies"`
-	Meta struct {
-		FirstDegreeCount     int `json:"first_degree_count" xml:"first_degree_count"`
-		NoVersionCount       int `json:"no_version_count" xml:"no_version_count"`
-		TotalUniqueCount     int `json:"total_unique_count" xml:"total_unique_count"`
-		UpdateAvailableCount int `json:"update_available_count" xml:"update_available_count"`
-	} `json:"meta" xml:"meta"`
+	Dependencies []Dependency   `json:"dependencies" xml:"dependencies"`
+	Meta         DependencyMeta `json:"meta" xml:"meta"`
 }
 
 // DifferenceResults represents the checksum of a project.  It includes a checksum
@@ -183,7 +189,7 @@ type EcosystemResults struct {
 	} `json:"ecosystems" xml:"ecosystems"`
 }
 
-// ExternalVulnerabilitiesResults represents the data colleced from an external
+// ExternalVulnerabilitiesResults represents the data collected from an external
 // vulnerability scan.  It includes the number of each vulnerability criticality
 // seen within the project.
 type ExternalVulnerabilitiesResults struct {
@@ -193,7 +199,7 @@ type ExternalVulnerabilitiesResults struct {
 	Low      int `json:"low" xml:"low"`
 }
 
-// LicenseResults represents the data colleced from a license scan.  It
+// LicenseResults represents the data collected from a license scan.  It
 // includes the name and type of each license seen within the project.
 type LicenseResults struct {
 	License struct {
@@ -204,7 +210,7 @@ type LicenseResults struct {
 	} `json:"license" xml:"license"`
 }
 
-// VirusResults represents the data colleced from a virus scan.  It includes
+// VirusResults represents the data collected from a virus scan.  It includes
 // information of the viruses seen and the virus scanner used.
 type VirusResults struct {
 	KnownViruses       int    `json:"known_viruses" xml:"known_viruses"`
@@ -224,6 +230,8 @@ type VirusResults struct {
 	} `json:"clam_av_details" xml:"clam_av_details"`
 }
 
+//VulnerabilityResults represents the data collected from a vulnerability scan.  It includes
+// information of the vulnerabilities seen.
 type VulnerabilityResults struct {
 	Vulnerabilities []struct {
 		ID              int                             `json:"id" xml:"id"`
@@ -234,7 +242,7 @@ type VulnerabilityResults struct {
 		Org             string                          `json:"org" xml:"org"`
 		Version         string                          `json:"version" xml:"version"`
 		Up              interface{}                     `json:"up" xml:"up"`
-		Edition         interface{}                     `json:edition"" xml:"edition"`
+		Edition         interface{}                     `json:"edition" xml:"edition"`
 		Aliases         []string                        `json:"aliases" xml:"aliases"`
 		CreatedAt       time.Time                       `json:"created_at" xml:"created_at"`
 		UpdatedAt       time.Time                       `json:"updated_at" xml:"updated_at"`

@@ -13,13 +13,14 @@ const (
 	reportGetProjectReportEndpoint  = "v1/report/getProject"
 )
 
-func (ic *IonClient) GetAnalysisReport(id, teamID, projectID string) (*reports.AnalysisReport, error) {
+//GetAnalysisReport takes an analysisID, teamID, and projectID returns the corresponding analysis report or an error encountered by the API
+func (ic *IonClient) GetAnalysisReport(analysisID, teamID, projectID string) (*reports.AnalysisReport, error) {
 	params := &url.Values{}
-	params.Set("analysis_id", id)
+	params.Set("analysis_id", analysisID)
 	params.Set("team_id", teamID)
 	params.Set("project_id", projectID)
 
-	b, err := ic.get(reportGetAnalysisReportEndpoint, params, nil, nil)
+	b, err := ic.Get(reportGetAnalysisReportEndpoint, params, nil, nil)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get analysis report: %v", err.Error())
 	}
@@ -33,13 +34,14 @@ func (ic *IonClient) GetAnalysisReport(id, teamID, projectID string) (*reports.A
 	return &r, nil
 }
 
-func (ic *IonClient) GetRawAnalysisReport(id, teamID, projectID string) (json.RawMessage, error) {
+//GetRawAnalysisReport takes an analysisID, teamID, and projectID returns the corresponding analysis report json or an error encountered by the API
+func (ic *IonClient) GetRawAnalysisReport(analysisID, teamID, projectID string) (json.RawMessage, error) {
 	params := &url.Values{}
-	params.Set("analysis_id", id)
+	params.Set("analysis_id", analysisID)
 	params.Set("team_id", teamID)
 	params.Set("project_id", projectID)
 
-	b, err := ic.get(reportGetAnalysisReportEndpoint, params, nil, nil)
+	b, err := ic.Get(reportGetAnalysisReportEndpoint, params, nil, nil)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get analysis report: %v", err.Error())
 	}
@@ -47,12 +49,13 @@ func (ic *IonClient) GetRawAnalysisReport(id, teamID, projectID string) (json.Ra
 	return b, nil
 }
 
-func (ic *IonClient) GetProjectReport(id, teamID string) (*reports.ProjectReport, error) {
+//GetProjectReport takes a projectID and a teamID returns the corresponding project report or an error encountered by the API
+func (ic *IonClient) GetProjectReport(projectID, teamID string) (*reports.ProjectReport, error) {
 	params := &url.Values{}
 	params.Set("team_id", teamID)
-	params.Set("project_id", id)
+	params.Set("project_id", projectID)
 
-	b, err := ic.get(reportGetProjectReportEndpoint, params, nil, nil)
+	b, err := ic.Get(reportGetProjectReportEndpoint, params, nil, nil)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get project report: %v", err.Error())
 	}
@@ -66,12 +69,13 @@ func (ic *IonClient) GetProjectReport(id, teamID string) (*reports.ProjectReport
 	return &r, nil
 }
 
-func (ic *IonClient) GetRawProjectReport(id, teamID string) (json.RawMessage, error) {
+//GetRawProjectReport takes a projectID and a teamID returns the corresponding project report json or an error encountered by the API
+func (ic *IonClient) GetRawProjectReport(projectID, teamID string) (json.RawMessage, error) {
 	params := &url.Values{}
 	params.Set("team_id", teamID)
-	params.Set("project_id", id)
+	params.Set("project_id", projectID)
 
-	b, err := ic.get(reportGetProjectReportEndpoint, params, nil, nil)
+	b, err := ic.Get(reportGetProjectReportEndpoint, params, nil, nil)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get project report: %v", err.Error())
 	}

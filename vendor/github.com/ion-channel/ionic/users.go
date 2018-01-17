@@ -10,9 +10,54 @@ import (
 )
 
 const (
-	usersSubscribedForEventEndpoint = "v1/users/subscribedForEvent"
+	usersCreateUserEndpoint         = "v1/users/createUser"
 	usersGetSelfEndpoint            = "v1/users/getSelf"
+	usersSubscribedForEventEndpoint = "v1/users/subscribedForEvent"
 )
+
+type createUserOptions struct {
+	Email                string `json:"email"`
+	Username             string `json:"username"`
+	Password             string `json:"password"`
+	PasswordConfirmation string `json:"password_confirmation"`
+}
+
+// CreateUser takes an email, username, and password.  The username and password
+// are not required, and can be left blank if so chosen.  It will return the
+// instantiated user object from the API or an error if it encounters one with
+// the API.
+func (ic *IonClient) CreateUser(email, username, password string) (*users.User, error) {
+	if email == "" {
+		return nil, fmt.Errorf("email is required")
+	}
+
+	opts := createUserOptions{
+		Email:                email,
+		Username:             username,
+		Password:             password,
+		PasswordConfirmation: password,
+	}
+
+	b, err := json.Marshal(opts)
+	if err != nil {
+		return nil, fmt.Errorf("failed to marshal request body: %v", err.Error())
+	}
+
+	buff := bytes.NewBuffer(b)
+
+	b, err = ic.Post(usersCreateUserEndpoint, nil, *buff, nil)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create user: %v", err.Error())
+	}
+
+	var u users.User
+	err = json.Unmarshal(b, &u)
+	if err != nil {
+		return nil, fmt.Errorf("failed to unmarshal response from api: %v", err.Error())
+	}
+
+	return &u, nil
+}
 
 // GetUsersSubscribedForEvent takes an event and returns a list of users
 // subscribed to that event and returns an error if there are JSON marshalling
@@ -24,7 +69,7 @@ func (ic *IonClient) GetUsersSubscribedForEvent(event events.Event) ([]users.Use
 	}
 
 	buff := bytes.NewBuffer(b)
-	b, err = ic.post(usersSubscribedForEventEndpoint, nil, *buff, nil)
+	b, err = ic.Post(usersSubscribedForEventEndpoint, nil, *buff, nil)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get users: %v", err.Error())
 	}
@@ -44,7 +89,7 @@ func (ic *IonClient) GetUsersSubscribedForEvent(event events.Event) ([]users.Use
 // the Ion Client.  An error is returned if the client cannot talk to the API
 // or the returned user object is nil or blank
 func (ic *IonClient) GetSelf() (*users.User, error) {
-	b, err := ic.get(usersGetSelfEndpoint, nil, nil, nil)
+	b, err := ic.Get(usersGetSelfEndpoint, nil, nil, nil)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get self: %v", err.Error())
 	}

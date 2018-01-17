@@ -30,6 +30,7 @@ type addScanRequest struct {
 	Type      string               `json:"scan_type"`
 }
 
+//AnalyzeProject takes a projectID, teamID, and project branch, performs an analysis, and returns the result status or an error encountered by the API
 func (ic *IonClient) AnalyzeProject(projectID, teamID, branch string) (*scanner.AnalysisStatus, error) {
 	request := &analyzeRequest{}
 	request.TeamID = teamID
@@ -45,7 +46,7 @@ func (ic *IonClient) AnalyzeProject(projectID, teamID, branch string) (*scanner.
 	}
 
 	buff := bytes.NewBuffer(b)
-	b, err = ic.post(scannerAnalyzeProjectEndpoint, nil, *buff, nil)
+	b, err = ic.Post(scannerAnalyzeProjectEndpoint, nil, *buff, nil)
 	if err != nil {
 		return nil, fmt.Errorf("failed to start analysis: %v", err.Error())
 	}
@@ -59,13 +60,14 @@ func (ic *IonClient) AnalyzeProject(projectID, teamID, branch string) (*scanner.
 	return &a, nil
 }
 
-func (ic *IonClient) GetAnalysisStatus(id, teamID, projectID string) (*scanner.AnalysisStatus, error) {
+//GetAnalysisStatus takes an analysisID, teamID, and projectID and returns the analysis status or an error encountered by the API
+func (ic *IonClient) GetAnalysisStatus(analysisID, teamID, projectID string) (*scanner.AnalysisStatus, error) {
 	params := &url.Values{}
-	params.Set("id", id)
+	params.Set("id", analysisID)
 	params.Set("team_id", teamID)
 	params.Set("project_id", projectID)
 
-	b, err := ic.get(scannerGetAnalysisStatusEndpoint, params, nil, nil)
+	b, err := ic.Get(scannerGetAnalysisStatusEndpoint, params, nil, nil)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get analysis: %v", err.Error())
 	}
@@ -79,9 +81,12 @@ func (ic *IonClient) GetAnalysisStatus(id, teamID, projectID string) (*scanner.A
 	return &a, nil
 }
 
-func (ic *IonClient) AddScanResult(id, teamID, projectID, status, scanType string, scanResults scanner.ExternalScan) (*scanner.AnalysisStatus, error) {
+//AddScanResult takes a scanResultID, teamID, projectID, status, scanType, and
+//client provided scan results, and adds them to the returned project analysis
+//or an error encountered by the API
+func (ic *IonClient) AddScanResult(scanResultID, teamID, projectID, status, scanType string, scanResults scanner.ExternalScan) (*scanner.AnalysisStatus, error) {
 	request := &addScanRequest{}
-	request.ID = id
+	request.ID = scanResultID
 	request.TeamID = teamID
 	request.ProjectID = projectID
 	request.Results = scanResults
@@ -93,7 +98,7 @@ func (ic *IonClient) AddScanResult(id, teamID, projectID, status, scanType strin
 	}
 
 	buff := bytes.NewBuffer(b)
-	b, err = ic.post(scannerAddScanEndpoint, nil, *buff, nil)
+	b, err = ic.Post(scannerAddScanEndpoint, nil, *buff, nil)
 	if err != nil {
 		return nil, fmt.Errorf("failed to start analysis: %v", err.Error())
 	}

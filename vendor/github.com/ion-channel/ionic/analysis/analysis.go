@@ -5,7 +5,7 @@ import (
 	"time"
 )
 
-//Analysis is a representation of an Ion Channel Analysis within the system
+// Analysis is a representation of an Ion Channel Analysis within the system
 type Analysis struct {
 	ID            string            `json:"id"`
 	TeamID        string            `json:"team_id"`
@@ -28,8 +28,12 @@ type Analysis struct {
 	ScanSummaries []json.RawMessage `json:"scan_summaries"`
 }
 
-type AnalysisSummary struct {
-	ID            string    `json:"analysis_id"`
+// Summary is a representation of a summarized Ion Channel Analysis
+// within the system
+type Summary struct {
+	ID            string    `json:"id"`
+	AnalysisID    string    `json:"analysis_id"`
+	TeamID        string    `json:"team_id"`
 	BuildNumber   string    `json:"build_number"`
 	Branch        string    `json:"branch"`
 	Description   string    `json:"description"`

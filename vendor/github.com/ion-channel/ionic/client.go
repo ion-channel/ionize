@@ -15,8 +15,8 @@ import (
 )
 
 const (
-	maxIdleConns        = 5
-	maxIdleConnsPerHost = 5
+	maxIdleConns        = 25
+	maxIdleConnsPerHost = 25
 	maxPagingLimit      = 100
 )
 
@@ -30,7 +30,21 @@ type IonClient struct {
 // New takes the credentials required to talk to the API, and the base URL of
 // the API and returns a client for talking to the API and an error if any
 // issues instantiating the client are encountered
-func New(secret string, baseURL string) (*IonClient, error) {
+func New(secret, baseURL string) (*IonClient, error) {
+	c := &http.Client{
+		Transport: &http.Transport{
+			MaxIdleConnsPerHost: maxIdleConnsPerHost,
+			MaxIdleConns:        maxIdleConns,
+		},
+	}
+
+	return NewWithClient(secret, baseURL, c)
+}
+
+// NewWithClient takes the credentials required to talk to the API, the base
+// URL of the API, and an existing HTTP client, and returns a client for talking
+// to the API and an error if any issues instantiating the client are encountered
+func NewWithClient(secret, baseURL string, client *http.Client) (*IonClient, error) {
 	u, err := url.Parse(baseURL)
 	if err != nil {
 		return nil, fmt.Errorf("cannot instantiate new ion client: %v", err.Error())
@@ -39,12 +53,7 @@ func New(secret string, baseURL string) (*IonClient, error) {
 	ic := &IonClient{
 		baseURL:     u,
 		bearerToken: secret,
-		client: &http.Client{
-			Transport: &http.Transport{
-				MaxIdleConnsPerHost: maxIdleConnsPerHost,
-				MaxIdleConns:        maxIdleConns,
-			},
-		},
+		client:      client,
 	}
 
 	return ic, nil
@@ -142,18 +151,30 @@ func (ic *IonClient) _do(method, endpoint string, params *url.Values, payload by
 	return &ir, nil
 }
 
-func (ic *IonClient) delete(endpoint string, params *url.Values, headers http.Header) (json.RawMessage, error) {
+// Delete takes an endpoint, params, and headers to pass as a delete call to the
+// API.  It will return a json RawMessage for the response and any errors it
+// encounters with the API.
+func (ic *IonClient) Delete(endpoint string, params *url.Values, headers http.Header) (json.RawMessage, error) {
 	return ic.do("DELETE", endpoint, params, bytes.Buffer{}, headers, nil)
 }
 
-func (ic *IonClient) get(endpoint string, params *url.Values, headers http.Header, page *pagination.Pagination) (json.RawMessage, error) {
+// Get takes an endpoint, params, headers, and pagination params to pass as a
+// get call to the API.  It will return a json RawMessage for the response and
+// any errors it encounters with the API.
+func (ic *IonClient) Get(endpoint string, params *url.Values, headers http.Header, page *pagination.Pagination) (json.RawMessage, error) {
 	return ic.do("GET", endpoint, params, bytes.Buffer{}, headers, page)
 }
 
-func (ic *IonClient) post(endpoint string, params *url.Values, payload bytes.Buffer, headers http.Header) (json.RawMessage, error) {
+// Post takes an endpoint, params, payload, and headers to pass as a post call
+// to the API.  It will return a json RawMessage for the response and any errors
+// it encounters with the API.
+func (ic *IonClient) Post(endpoint string, params *url.Values, payload bytes.Buffer, headers http.Header) (json.RawMessage, error) {
 	return ic.do("POST", endpoint, params, payload, headers, nil)
 }
 
-func (ic *IonClient) put(endpoint string, params *url.Values, payload bytes.Buffer, headers http.Header) (json.RawMessage, error) {
+// Put takes an endpoint, params, payload, and headers to pass as a put call to
+// the API.  It will return a json RawMessage for the response and any errors it
+// encounters with the API.
+func (ic *IonClient) Put(endpoint string, params *url.Values, payload bytes.Buffer, headers http.Header) (json.RawMessage, error) {
 	return ic.do("PUT", endpoint, params, payload, headers, nil)
 }
