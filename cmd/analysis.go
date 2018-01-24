@@ -58,16 +58,24 @@ Will read the configuration from the $PWD/.ionize.yaml file and begin an analysi
 			}
 		}
 
-		if viper.GetString("vulnerabilities") != "" {
-			scan, err := loadVulnerabilities(viper.GetString("vulnerabilities"))
-			if err != nil {
-				log.Fatalf("Analysis request failed for %s: %v", project, err.Error())
+		if viper.IsSet("vulnerabilities") {
+			files := make([]string, 1)
+			if viper.GetString("vulnerabilities") != "" {
+				files[0] = viper.GetString("vulnerabilities")
+			} else {
+				files = viper.GetStringSlice("vulnerabilities")
 			}
+			for _, file := range files {
+				scan, err := loadVulnerabilities(file)
+				if err != nil {
+					log.Fatalf("Analysis request failed for %s: %v", project, err.Error())
+				}
 
-			fmt.Println("Adding external vulnerabilities scan data")
-			analysisStatus, err = cli.AddScanResult(id, team, project, "accepted", "vulnerability", *scan)
-			if err != nil {
-				log.Fatalf("Analysis Report request failed for %s: %v", project, err.Error())
+				fmt.Println("Adding external vulnerabilities scan data")
+				analysisStatus, err = cli.AddScanResult(id, team, project, "accepted", "vulnerability", *scan)
+				if err != nil {
+					log.Fatalf("Analysis Report request failed for %s: %v", project, err.Error())
+				}
 			}
 		}
 
