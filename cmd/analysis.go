@@ -29,14 +29,14 @@ Will read the configuration from the $PWD/.ionize.yaml file and begin an analysi
 		fmt.Println("Run the analysis from the . file")
 		key := viper.GetString("key")
 		api := viper.GetString("api")
-		cli, err := ionic.New(key, api)
+		cli, err := ionic.New(api)
 		if err != nil {
 			log.Fatalf("Failed to create Ion Channel Client: %v", err.Error())
 		}
 		project := viper.GetString("project")
 		team := viper.GetString("team")
 		branch := getBranch()
-		analysisStatus, err := cli.AnalyzeProject(project, team, branch)
+		analysisStatus, err := cli.AnalyzeProject(project, team, branch, key)
 		if err != nil {
 			log.Fatalf("Analysis request failed for %s: %v", project, err.Error())
 		}
@@ -52,7 +52,7 @@ Will read the configuration from the $PWD/.ionize.yaml file and begin an analysi
 
 			scan := scanner.ExternalScan{}
 			scan.Coverage = coverage
-			analysisStatus, err = cli.AddScanResult(id, team, project, "accepted", "coverage", scan)
+			analysisStatus, err = cli.AddScanResult(id, team, project, "accepted", "coverage", key, scan)
 			if err != nil {
 				log.Fatalf("Analysis Report request failed for %s: %v", project, err.Error())
 			}
@@ -72,7 +72,7 @@ Will read the configuration from the $PWD/.ionize.yaml file and begin an analysi
 				}
 
 				fmt.Println("Adding external vulnerabilities scan data")
-				analysisStatus, err = cli.AddScanResult(id, team, project, "accepted", "vulnerability", *scan)
+				analysisStatus, err = cli.AddScanResult(id, team, project, "accepted", "vulnerability", key, *scan)
 				if err != nil {
 					log.Fatalf("Analysis Report request failed for %s: %v", project, err.Error())
 				}
@@ -83,7 +83,7 @@ Will read the configuration from the $PWD/.ionize.yaml file and begin an analysi
 		for analysisStatus.Status == "accepted" {
 			fmt.Print(".")
 			time.Sleep(10 * time.Second)
-			analysisStatus, err = cli.GetAnalysisStatus(id, team, project)
+			analysisStatus, err = cli.GetAnalysisStatus(id, team, project, key)
 			if err != nil {
 				log.Fatalf("Analysis Status request failed for %s: %v", project, err.Error())
 			}
@@ -91,7 +91,7 @@ Will read the configuration from the $PWD/.ionize.yaml file and begin an analysi
 		fmt.Printf("%s\n", analysisStatus.Status)
 
 		fmt.Println("Checking status of scans")
-		report, err := cli.GetAnalysisReport(id, team, project)
+		report, err := cli.GetAnalysisReport(id, team, project, key)
 		if err != nil {
 			log.Fatalf("Analysis Report request failed for %s (%s): %v", project, id, err.Error())
 		}

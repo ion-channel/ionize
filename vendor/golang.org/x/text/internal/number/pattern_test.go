@@ -154,17 +154,6 @@ var testCases = []struct {
 		},
 	},
 }, {
-	"##0.###E00",
-	&Pattern{
-		FormatWidth: 10,
-		RoundingContext: RoundingContext{
-			MinIntegerDigits:  1,
-			MaxIntegerDigits:  3,
-			MaxFractionDigits: 3,
-			MinExponentDigits: 2,
-		},
-	},
-}, {
 	"##00.0#E0",
 	&Pattern{
 		FormatWidth: 9,
@@ -203,7 +192,6 @@ var testCases = []struct {
 		RoundingContext: RoundingContext{
 			MinSignificantDigits: 1,
 			MaxSignificantDigits: 1,
-			MaxFractionDigits:    -1,
 		},
 	},
 }, {
@@ -214,7 +202,6 @@ var testCases = []struct {
 		RoundingContext: RoundingContext{
 			MinSignificantDigits: 4,
 			MaxSignificantDigits: 4,
-			MaxFractionDigits:    -1,
 		},
 	},
 }, {
@@ -224,7 +211,6 @@ var testCases = []struct {
 		RoundingContext: RoundingContext{
 			MinSignificantDigits: 1,
 			MaxSignificantDigits: 4,
-			MaxFractionDigits:    -1,
 		},
 	},
 }, {
@@ -275,7 +261,6 @@ var testCases = []struct {
 		FormatWidth: 4,
 		RoundingContext: RoundingContext{
 			Increment:         105,
-			IncrementScale:    2,
 			MinIntegerDigits:  1,
 			MinFractionDigits: 2,
 			MaxFractionDigits: 2,
@@ -289,7 +274,6 @@ var testCases = []struct {
 		GroupingSize: [2]uint8{2, 0},
 		RoundingContext: RoundingContext{
 			Increment:         105,
-			IncrementScale:    0,
 			MinIntegerDigits:  3,
 			MinFractionDigits: 0,
 			MaxFractionDigits: 0,
