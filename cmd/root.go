@@ -55,6 +55,11 @@ func initConfig() {
 
 	err := viper.ReadInConfig()
 	if err != nil {
-		fmt.Printf("Failed reading config: %v", err.Error())
+		fmt.Printf("Failed reading config: %v\n", err.Error())
 	}
+}
+
+func init() {
+	RootCmd.AddCommand(analyzeCmd)
+	RootCmd.AddCommand(scrutinizeCmd)
 }
