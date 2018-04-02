@@ -1,10 +1,10 @@
-hash: 9ae2be3cfc2935cf136fb75666b72f83ea76e3df0e2371fec9fe3ac36ddbc0f9
-updated: 2018-01-16T15:41:49.669125-08:00
+hash: b3810b340fe7824bff7582ee01ca5fb2a51c9489f907a8b7fbaebe94b55c746b
+updated: 2018-04-02T09:10:43.857686-07:00
 imports:
 - name: github.com/fsnotify/fsnotify
   version: c2828203cd70a50dcccfb2761f8b1f8ceef9a8e9
 - name: github.com/hashicorp/hcl
-  version: 23c074d0eceb2b8a5bfdbb271ab780cde70f05a8
+  version: f40e974e75af4e271d97ce0fc917af5898ae7bda
   subpackages:
   - hcl/ast
   - hcl/parser
@@ -17,7 +17,7 @@ imports:
 - name: github.com/inconshreveable/mousetrap
   version: 76626ae9c91c4f2a10f34cad8ce83ea42c93bb75
 - name: github.com/ion-channel/ionic
-  version: bec066e08d142e63588fcbfff293077cbe7011b3
+  version: fa59bbd068570480c524d4d0f5a23730099121d0
   subpackages:
   - aliases
   - analysis
@@ -35,31 +35,31 @@ imports:
   - users
   - vulnerabilities
 - name: github.com/magiconair/properties
-  version: 49d762b9817ba1c2e9d0c69183c2b4a8b8f1d934
+  version: 2c9e9502788518c97fe44e8955cd069417ee89df
 - name: github.com/mitchellh/mapstructure
-  version: b4575eea38cca1123ec2dc90c26529b5c5acfcff
+  version: 00c29f56e2386353d58c599509e8dc3801b0d716
 - name: github.com/pelletier/go-toml
-  version: 9bf0212445a9fb4769aca5d2d86fbc381af39d52
+  version: 66540cf1fcd2c3aee6f6787dfa32a6ae9a870f12
 - name: github.com/spf13/afero
-  version: bb8f1927f2a9d3ab41c9340aa034f6b803f4359c
+  version: 63644898a8da0bc22138abf860edaf5277b6102e
   subpackages:
   - mem
 - name: github.com/spf13/cast
-  version: acbeb36b902d72a7a4c18e8f3241075e7ab763e4
+  version: 8965335b8c7107321228e3e3702cab9832751bac
 - name: github.com/spf13/cobra
   version: 0dacccfbaabc71b872087c1719c5380d3e185173
 - name: github.com/spf13/jwalterweatherman
   version: 7c0cea34c8ece3fbeb2b27ab9b59511d360fb394
 - name: github.com/spf13/pflag
-  version: 4c012f6dcd9546820e378d0bdda4d8fc772cdfea
+  version: 1cd4a0c365d95803411bec89fb7b76bade17053b
 - name: github.com/spf13/viper
   version: 25b30aa063fc18e48662b86996252eabdcf2f0c7
 - name: golang.org/x/sys
-  version: fff93fa7cd278d84afc205751523809c464168ab
+  version: 378d26f46672a356c46195c28f61bdb4c0a781dd
   subpackages:
   - unix
 - name: golang.org/x/text
-  version: e19ae1496984b1c655b8044a65c0300a3c878dd3
+  version: ac87088df8ef557f1e32cd00ed0b6fbc3f7ddafb
   subpackages:
   - encoding
   - encoding/charmap
@@ -78,7 +78,7 @@ imports:
   - transform
   - unicode/norm
 - name: gopkg.in/yaml.v2
-  version: d670f9405373e636a5a2765eea47fac0c9bc91a4
+  version: eb3733d160e74a9c7e442f435eb3bea458e1d19f
 testImports:
 - name: github.com/franela/goblin
   version: 2fa789fd0c6b7975acbfb89a04830b4081a7b0e9
@@ -99,7 +99,7 @@ testImports:
   - matchers/support/goraph/util
   - types
 - name: golang.org/x/net
-  version: 5ccada7d0a7ba9aeb5d3aca8d3501b4c2a509fec
+  version: 66aacef3dd8a676686c7ae3716979581e8b03c47
   subpackages:
   - html
   - html/atom
