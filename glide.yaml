@@ -16,3 +16,5 @@ testImport:
   version: 6b7aa4333fbadc13015f856ae2e27ca2c0817cad
 - package: github.com/onsi/gomega
   version: 00acfa9d92a386415bd235ab069c52063f925998
+- package: github.com/aws/aws-sdk-go/
+  version: v1.13.25
