@@ -1,5 +1,7 @@
 package: github.com/ion-channel/ionize
 import:
+- package: github.com/aws/aws-sdk-go/
+  version: v1.13.25
 - package: github.com/ion-channel/ionic
   version: v0.12.0
   subpackages:
