@@ -68,9 +68,9 @@ Will read the configuration from the $PWD/.ionize.yaml file and begin an analysi
 			if er != nil {
 				log.Fatalf("Failed to receive projects: %v", err.Error())
 			}
-			for _, p := range projects {
+			for i, p := range projects {
 				if p.Source == url && p.Branch == version {
-					project = &p
+					project = &projects[i]
 					break
 				}
 			}
