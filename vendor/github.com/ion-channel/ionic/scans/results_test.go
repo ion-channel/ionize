@@ -12,9 +12,51 @@ func TestScanResults(t *testing.T) {
 	g := Goblin(t)
 	RegisterFailHandler(func(m string, _ ...int) { g.Fail(m) })
 
-	g.Describe("Scan Results", func() {
+	g.Describe("Untranslated Scan Results", func(){
+		g.It("should translate untranslated scan results", func(){
+			var untranslatedResult UntranslatedResults
+			err := json.Unmarshal([]byte(SampleValidUntranslatedScanResultsLicense), &untranslatedResult)
+
+			// validate the json parsing
+			Expect(err).NotTo(HaveOccurred())
+			Expect(untranslatedResult.AboutYML).To(BeNil())
+			Expect(untranslatedResult.Community).To(BeNil())
+			Expect(untranslatedResult.Coverage).To(BeNil())
+			Expect(untranslatedResult.Dependency).To(BeNil())
+			Expect(untranslatedResult.Difference).To(BeNil())
+			Expect(untranslatedResult.Ecosystem).To(BeNil())
+			Expect(untranslatedResult.ExternalVulnerabilities).To(BeNil())
+			Expect(untranslatedResult.Vulnerability).To(BeNil())
+			Expect(untranslatedResult.License).NotTo(BeNil())
+			license := untranslatedResult.License
+			Expect(license.Name).To(Equal("some license"))
+			Expect(license.Type).To(HaveLen(1))
+			Expect(license.Type[0].Name).To(Equal("a license"))
+
+			// translate it
+			translatedResult := untranslatedResult.Translate()
+
+			// validate translated object
+			Expect(translatedResult).NotTo(BeNil())
+			Expect(translatedResult.Type).To(Equal("license"))
+			Expect(translatedResult.Data).NotTo(BeNil())
+			wasLicenseResults := false
+			switch translatedResult.Data.(type) {
+			case *LicenseResults:
+				wasLicenseResults = true
+			}
+			Expect(wasLicenseResults).To(BeTrue())
+			licenseResults := translatedResult.Data.(*LicenseResults)
+			Expect(licenseResults.Type).To(HaveLen(1))
+			Expect(licenseResults.Type[0].Name).To(Equal("a license"))
+			Expect(licenseResults.Name).To(Equal("some license"))
+			Expect(licenseResults.License.Type).To(HaveLen(1))
+			Expect(licenseResults.License.Type[0].Name).To(Equal("a license"))
+		})
+	})
+	g.Describe("Translated Scan Results", func() {
 		g.It("should unmarshal a scan results with about yml data", func() {
-			var r Results
+			var r TranslatedResults
 			err := json.Unmarshal([]byte(SampleValidScanResultsAboutYML), &r)
 
 			Expect(err).To(BeNil())
@@ -26,7 +68,7 @@ func TestScanResults(t *testing.T) {
 		})
 
 		g.It("should unmarshal a scan results with community data", func() {
-			var r Results
+			var r TranslatedResults
 			err := json.Unmarshal([]byte(SampleValidScanResultsCommunity), &r)
 
 			Expect(err).To(BeNil())
@@ -40,7 +82,7 @@ func TestScanResults(t *testing.T) {
 		})
 
 		g.It("should unmarshal a scan results with coverage data", func() {
-			var r Results
+			var r TranslatedResults
 			err := json.Unmarshal([]byte(SampleValidScanResultsCoverage), &r)
 
 			Expect(err).To(BeNil())
@@ -52,7 +94,7 @@ func TestScanResults(t *testing.T) {
 		})
 
 		g.It("should unmarshal a scan results with dependency data", func() {
-			var r Results
+			var r TranslatedResults
 			err := json.Unmarshal([]byte(SampleValidScanResultsDependency), &r)
 
 			Expect(err).To(BeNil())
@@ -68,7 +110,7 @@ func TestScanResults(t *testing.T) {
 		})
 
 		g.It("should unmarshal a scan results with difference data", func() {
-			var r Results
+			var r TranslatedResults
 			err := json.Unmarshal([]byte(SampleValidScanResultsDifference), &r)
 
 			Expect(err).To(BeNil())
@@ -81,7 +123,7 @@ func TestScanResults(t *testing.T) {
 		})
 
 		g.It("should unmarshal a scan results with ecosystem data", func() {
-			var r Results
+			var r TranslatedResults
 			err := json.Unmarshal([]byte(SampleValidScanResultsEcosystems), &r)
 
 			Expect(err).To(BeNil())
@@ -93,7 +135,7 @@ func TestScanResults(t *testing.T) {
 		})
 
 		g.It("should unmarshal a scan results with external vulnerabilities scan data", func() {
-			var r Results
+			var r TranslatedResults
 			err := json.Unmarshal([]byte(SampleValidExternalVulnerabilities), &r)
 
 			Expect(err).To(BeNil())
@@ -108,7 +150,7 @@ func TestScanResults(t *testing.T) {
 		})
 
 		g.It("should unmarshal a scan results with license data", func() {
-			var r Results
+			var r TranslatedResults
 			err := json.Unmarshal([]byte(SampleValidScanResultsLicense), &r)
 
 			Expect(err).To(BeNil())
@@ -120,7 +162,7 @@ func TestScanResults(t *testing.T) {
 		})
 
 		g.It("should unmarshal a scan results with virus data", func() {
-			var r Results
+			var r TranslatedResults
 			err := json.Unmarshal([]byte(SampleValidScanResultsVirus), &r)
 
 			Expect(err).To(BeNil())
@@ -132,7 +174,7 @@ func TestScanResults(t *testing.T) {
 		})
 
 		g.It("should unmarshal a scan results with vulnerability data", func() {
-			var r Results
+			var r TranslatedResults
 			err := json.Unmarshal([]byte(SampleValidScanResultsVulnerability), &r)
 
 			Expect(err).To(BeNil())
@@ -144,7 +186,7 @@ func TestScanResults(t *testing.T) {
 		})
 
 		g.It("should return an error for an invalid results type", func() {
-			var r Results
+			var r TranslatedResults
 			err := json.Unmarshal([]byte(SampleInvalidResults), &r)
 
 			Expect(err).NotTo(BeNil())
@@ -165,4 +207,6 @@ const (
 	SampleInvalidResults                = `{"type":"fooresult", "data":"I pitty the foo"}`
 	SampleValidScanResultsDifference    = `{"data": {"checksum": "checksumishere","difference": true},"type": "difference"}`
 	SampleValidExternalVulnerabilities  = `{"type":"external_vulnerability","data":{"critical":1,"high":0,"medium":1,"low": 0}}`
+
+	SampleValidUntranslatedScanResultsLicense = `{"license": {"license": {"type": [{"name": "a license"}], "name": "some license"}}}`
 )

@@ -9,15 +9,80 @@ import (
 	"github.com/ion-channel/ionic/vulnerabilities"
 )
 
-// Results is an Ion Channel representation of the results from a
-// scan summary.  It contains what type of results and the data pertaining to
-// the results.
-type Results struct {
+// UntranslatedResults represents a result of a specific type that has not been
+// translated for use in reports
+type UntranslatedResults struct {
+	AboutYML                *AboutYMLResults                `json:"about_yml,omitempty"`
+	Community               *CommunityResults               `json:"community,omitempty"`
+	Coverage                *CoverageResults                `json:"coverage,omitempty"`
+	Dependency              *DependencyResults              `json:"dependency,omitempty"`
+	Difference              *DifferenceResults              `json:"difference,omitempty"`
+	Ecosystem               *EcosystemResults               `json:"ecosystems,omitempty"`
+	ExternalVulnerabilities *ExternalVulnerabilitiesResults `json:"external_vulnerability,omitempty"`
+	License                 *LicenseResults                 `json:"license,omitempty"`
+	Virus                   *VirusResults                   `json:"virus,omitempty"`
+	Vulnerability           *VulnerabilityResults           `json:"vulnerability,omitempty"`
+}
+
+// Translate moves information from the particular sub-struct, IE
+// AboutYMLResults or LicenseResults into a generic, Data struct
+func (u *UntranslatedResults) Translate() *TranslatedResults {
+	var tr TranslatedResults
+	// There is an argument to be made that the following "if" clauses
+	// could be simplified with introspection since they all do
+	// basically the same thing. I've (dmiles) chosen to writ it all
+	// out in the name of explicit, easily-readable code.
+	if u.AboutYML != nil {
+		tr.Type = "about_yml"
+		tr.Data = u.AboutYML
+	}
+	if u.Community != nil {
+		tr.Type = "community"
+		tr.Data = u.Community
+	}
+	if u.Coverage != nil {
+		tr.Type = "coverage"
+		tr.Data = u.Coverage
+	}
+	if u.Dependency != nil {
+		tr.Type = "dependency"
+		tr.Data = u.Dependency
+	}
+	if u.Difference != nil {
+		tr.Type = "difference"
+		tr.Data = u.Difference
+	}
+	if u.Ecosystem != nil {
+		tr.Type = "ecosystems"
+		tr.Data = u.Ecosystem
+	}
+	if u.ExternalVulnerabilities != nil {
+		tr.Type = "external_vulnerability"
+		tr.Data = u.ExternalVulnerabilities
+	}
+	if u.License != nil {
+		tr.Type = "license"
+		tr.Data = u.License
+	}
+	if u.Virus != nil {
+		tr.Type = "virus"
+		tr.Data = u.Virus
+	}
+	if u.Vulnerability != nil {
+		tr.Type = "vulnerability"
+		tr.Data = u.Vulnerability
+	}
+	return &tr
+}
+
+// TranslatedResults represents a result of a specific type that has been
+// translated for use in reports
+type TranslatedResults struct {
 	Type string      `json:"type" xml:"type"`
 	Data interface{} `json:"data,omitempty" xml:"data,omitempty"`
 }
 
-type results struct {
+type translatedResults struct {
 	Type    string          `json:"type"`
 	RawData json.RawMessage `json:"data"`
 }
@@ -25,8 +90,8 @@ type results struct {
 // UnmarshalJSON is a custom JSON unmarshaller implementation for the standard
 // go json package to know how to properly interpret ScanSummaryResults from
 // JSON.
-func (r *Results) UnmarshalJSON(b []byte) error {
-	var tr results
+func (r *TranslatedResults) UnmarshalJSON(b []byte) error {
+	var tr translatedResults
 	err := json.Unmarshal(b, &tr)
 	if err != nil {
 		return err
@@ -47,6 +112,20 @@ func (r *Results) UnmarshalJSON(b []byte) error {
 		var c CommunityResults
 		err := json.Unmarshal(tr.RawData, &c)
 		if err != nil {
+			// either Oscar or Doozer is putting incorrectly formatted
+			// community data results. First off they're "translated" when
+			// we expect them to be "untranslated," second their Data
+			// member contains a list of object when we expect it to BE
+			// an object. So, if we "cannot unmarshal array," we're probably
+			// in this case. Try one more time:
+			if strings.Contains(err.Error(), "cannot unmarshal array") {
+				var sliceOfCommunityResults []CommunityResults
+				err := json.Unmarshal(tr.RawData, &sliceOfCommunityResults)
+				if err == nil {
+					c = sliceOfCommunityResults[0]
+					break
+				}
+			}
 			return fmt.Errorf("failed to unmarshall community results: %v", err)
 		}
 
@@ -202,12 +281,18 @@ type ExternalVulnerabilitiesResults struct {
 // LicenseResults represents the data collected from a license scan.  It
 // includes the name and type of each license seen within the project.
 type LicenseResults struct {
-	License struct {
-		Name string `json:"name" xml:"name"`
-		Type []struct {
-			Name string `json:"name" xml:"name"`
-		} `json:"type" xml:"type"`
-	} `json:"license" xml:"license"`
+	*License `json:"license" xml:"license"`
+}
+
+// License represents a name and slice of types of licenses seen in a given file
+type License struct {
+	Name string        `json:"name" xml:"name"`
+	Type []LicenseType `json:"type" xml:"type"`
+}
+
+// LicenseType represents a type of license such as MIT, Apache 2.0, etc
+type LicenseType struct {
+	Name string `json:"name" xml:"name"`
 }
 
 // VirusResults represents the data collected from a virus scan.  It includes
