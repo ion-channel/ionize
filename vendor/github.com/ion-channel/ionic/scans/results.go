@@ -20,8 +20,8 @@ type UntranslatedResults struct {
 	Ecosystem               *EcosystemResults               `json:"ecosystems,omitempty"`
 	ExternalVulnerabilities *ExternalVulnerabilitiesResults `json:"external_vulnerability,omitempty"`
 	License                 *LicenseResults                 `json:"license,omitempty"`
-	Virus                   *VirusResults                   `json:"virus,omitempty"`
-	Vulnerability           *VulnerabilityResults           `json:"vulnerability,omitempty"`
+	Virus                   *VirusResults                   `json:"clamav,omitempty"`
+	Vulnerability           *VulnerabilityResults           `json:"vulnerabilities,omitempty"`
 }
 
 // Translate moves information from the particular sub-struct, IE
@@ -112,12 +112,7 @@ func (r *TranslatedResults) UnmarshalJSON(b []byte) error {
 		var c CommunityResults
 		err := json.Unmarshal(tr.RawData, &c)
 		if err != nil {
-			// either Oscar or Doozer is putting incorrectly formatted
-			// community data results. First off they're "translated" when
-			// we expect them to be "untranslated," second their Data
-			// member contains a list of object when we expect it to BE
-			// an object. So, if we "cannot unmarshal array," we're probably
-			// in this case. Try one more time:
+			// Note: Could be a slice, needs to be fixed
 			if strings.Contains(err.Error(), "cannot unmarshal array") {
 				var sliceOfCommunityResults []CommunityResults
 				err := json.Unmarshal(tr.RawData, &sliceOfCommunityResults)
@@ -262,10 +257,26 @@ type DifferenceResults struct {
 // include the name of the ecosystem and the number of lines seen for the given
 // ecosystem.
 type EcosystemResults struct {
-	Ecosystems []struct {
-		Ecosystem string `json:"ecosystem" xml:"ecosystem"`
-		Lines     int    `json:"lines" xml:"lines"`
-	} `json:"ecosystems" xml:"ecosystems"`
+	Ecosystems map[string]int `json:"ecosystems" xml:"ecosystems"`
+}
+
+// MarshalJSON meets the marshaller interface to custom wrangle an ecosystem
+// result into the json shape
+func (e EcosystemResults) MarshalJSON() ([]byte, error) {
+	return json.Marshal(e.Ecosystems)
+}
+
+// UnmarshalJSON meets the unmarshaller interface to custom wrangle the
+// ecosystem scan into an ecosystem result
+func (e *EcosystemResults) UnmarshalJSON(b []byte) error {
+	var m map[string]int
+	err := json.Unmarshal(b, &m)
+	if err != nil {
+		return fmt.Errorf("failed to unmarshal ecosystem result: %v", err.Error())
+	}
+
+	e.Ecosystems = m
+	return nil
 }
 
 // ExternalVulnerabilitiesResults represents the data collected from an external

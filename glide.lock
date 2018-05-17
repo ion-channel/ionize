@@ -1,5 +1,5 @@
-hash: eb89df0f75808ef882683d1c307e985d94fd44cb93d55100d5082c29e4770605
-updated: 2018-04-19T13:41:06.666826-07:00
+hash: cd86dcd41ae42bead01dfd47038ed4d9de719638b826075b79448c5374d707ec
+updated: 2018-05-17T10:20:51.616079-07:00
 imports:
 - name: github.com/aws/aws-sdk-go
   version: 74ca63959be8b9a9a24cd86eaaea8bf99de8022d
@@ -36,7 +36,7 @@ imports:
 - name: github.com/fsnotify/fsnotify
   version: c2828203cd70a50dcccfb2761f8b1f8ceef9a8e9
 - name: github.com/go-ini/ini
-  version: ace140f73450505f33e8b8418216792275ae82a7
+  version: bda519ae5f4cbc60d391ff8610711627a08b86ae
 - name: github.com/hashicorp/hcl
   version: ef8a98b0bbce4a65b5aa4c368430a80ddc533168
   subpackages:
@@ -51,7 +51,7 @@ imports:
 - name: github.com/inconshreveable/mousetrap
   version: 76626ae9c91c4f2a10f34cad8ce83ea42c93bb75
 - name: github.com/ion-channel/ionic
-  version: 301e91b819e3b6178e1a8f8565ca8557974ec0bc
+  version: d10760e08cad4ef241c008bbe028df2037e4a47c
   subpackages:
   - aliases
   - analysis
@@ -71,9 +71,9 @@ imports:
 - name: github.com/jmespath/go-jmespath
   version: c2b33e8439af944379acbdd9c3a5fe0bc44bd8a5
 - name: github.com/magiconair/properties
-  version: 2c9e9502788518c97fe44e8955cd069417ee89df
+  version: c2353362d570a7bfa228149c62842019201cfb71
 - name: github.com/mitchellh/mapstructure
-  version: 00c29f56e2386353d58c599509e8dc3801b0d716
+  version: bb74f1db0675b241733089d5a1faa5dd8b0ef57b
 - name: github.com/pelletier/go-toml
   version: 66540cf1fcd2c3aee6f6787dfa32a6ae9a870f12
 - name: github.com/spf13/afero
@@ -91,11 +91,11 @@ imports:
 - name: github.com/spf13/viper
   version: 25b30aa063fc18e48662b86996252eabdcf2f0c7
 - name: golang.org/x/sys
-  version: 3ccc7e5779793fd54564baf60c51bf017955e0ba
+  version: 7c87d13f8e835d2fb3a70a2912c811ed0c1d241b
   subpackages:
   - unix
 - name: golang.org/x/text
-  version: 7922cc490dd5a7dbaa7fd5d6196b49db59ac042f
+  version: 5c1cf69b5978e5a34c5f9ba09a83e56acc4b7877
   subpackages:
   - encoding
   - encoding/charmap
@@ -137,7 +137,7 @@ testImports:
   - matchers/support/goraph/util
   - types
 - name: golang.org/x/net
-  version: d41e8174641f662c5a2d1c7a5f9e828788eb8706
+  version: 2491c5de3490fced2f6cff376127c667efeed857
   subpackages:
   - html
   - html/atom
