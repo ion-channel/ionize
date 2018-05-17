@@ -7,35 +7,55 @@ import (
 	"time"
 )
 
-// ScanSummary is an Ion Channel representation of the summary produced by an
-// individual scan on a project.  It contains all the details the Ion Channel
-// platform discovers for that scan.
-type ScanSummary struct {
-	*scanSummary
+// Scan represents the data collected from an individual scan on a project.
+type Scan struct {
+	*scan
 	TranslatedResults   *TranslatedResults   `json:"-"`
 	UntranslatedResults *UntranslatedResults `json:"-"`
 }
 
-type scanSummary struct {
-	ID          string          `json:"id" xml:"id"`
-	TeamID      string          `json:"team_id" xml:"team_id"`
-	ProjectID   string          `json:"project_id" xml:"project_id"`
-	AnalysisID  string          `json:"analysis_id" xml:"analysis_id"`
-	Summary     string          `json:"summary" xml:"summary"`
+type scan struct {
+	ID          string          `json:"id"`
+	TeamID      string          `json:"team_id"`
+	ProjectID   string          `json:"project_id"`
+	AnalysisID  string          `json:"analysis_id"`
+	Summary     string          `json:"summary"`
 	Results     json.RawMessage `json:"results"`
-	CreatedAt   time.Time       `json:"created_at" xml:"created_at"`
-	UpdatedAt   time.Time       `json:"updated_at" xml:"updated_at"`
-	Duration    float64         `json:"duration" xml:"duration"`
-	Passed      bool            `json:"passed" xml:"passed"`
-	Risk        string          `json:"risk" xml:"risk"`
-	Name        string          `json:"name" xml:"name"`
-	Description string          `json:"description" xml:"description"`
-	Type        string          `json:"type" xml:"type"`
+	CreatedAt   time.Time       `json:"created_at"`
+	UpdatedAt   time.Time       `json:"updated_at"`
+	Duration    float64         `json:"duration"`
+	Name        string          `json:"name"`
+	Description string          `json:"description"`
+}
+
+// Translate performs a one way translation on a scan by translating the
+// UntranslatedResults if they are not nil, putting the output into Translated
+// results, and setting UntranslatedResults to be nil. It returns an error if
+// it encounters a JSON error when translating the results.
+func (s *Scan) Translate() error {
+	if s.UntranslatedResults != nil {
+		translated := s.UntranslatedResults.Translate()
+		s.TranslatedResults = translated
+		s.UntranslatedResults = nil
+
+		b, err := json.Marshal(s.TranslatedResults)
+		if err != nil {
+			return fmt.Errorf("failed to translate scan: %v", err.Error())
+		}
+
+		if s.scan == nil {
+			s.scan = &scan{}
+		}
+
+		s.Results = b
+	}
+
+	return nil
 }
 
 // MarshalJSON meets the marshaller interface to custom wrangle translated or
 // untranslated results into the same results key for the JSON
-func (s *ScanSummary) MarshalJSON() ([]byte, error) {
+func (s *Scan) MarshalJSON() ([]byte, error) {
 	if s.TranslatedResults != nil {
 		b, err := json.Marshal(s.TranslatedResults)
 		if err != nil {
@@ -54,20 +74,20 @@ func (s *ScanSummary) MarshalJSON() ([]byte, error) {
 		s.Results = b
 	}
 
-	return json.Marshal(s.scanSummary)
+	return json.Marshal(s.scan)
 }
 
 // UnmarshalJSON meets the unmarshaller interface to custom wrangle results from
 // a singular results key into the correct translated or untranslated results
 // field
-func (s *ScanSummary) UnmarshalJSON(b []byte) error {
-	var ss scanSummary
+func (s *Scan) UnmarshalJSON(b []byte) error {
+	var ss scan
 	err := json.Unmarshal(b, &ss)
 	if err != nil {
-		return fmt.Errorf("failed to unmarshal scans summary: %v", err.Error())
+		return fmt.Errorf("failed to unmarshal scans: %v", err.Error())
 	}
 
-	s.scanSummary = &ss
+	s.scan = &ss
 
 	var tr TranslatedResults
 	err = json.Unmarshal(s.Results, &tr)
