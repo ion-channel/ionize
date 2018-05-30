@@ -4,17 +4,16 @@ go:
   - 1.8
   - tip
 
+sudo: required
+
 install:
-  - go get -u github.com/golang/lint/golint
+  - make travis_setup
 
 script:
-  - make fmt vet lint unit_test build install
+  - make fmt vet lint unit_test build coverage analyze install
 
 notifications:
   email: false
-  slack:
-    rooms:
-      - ionchannel:judViUieHy4ppRX1vYhok1HK#build
 
 before_deploy: make crosscompile
 
