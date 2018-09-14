@@ -135,17 +135,33 @@ func TestPagination(t *testing.T) {
 		})
 
 		g.Describe("Parsing", func() {
-			g.It("should parse pagination params from the request", func() {
+			g.It("should parse offset and limit from query params", func() {
+				u, _ := url.Parse("http://localhost/something?offset=10&limit=100")
+				req := &http.Request{
+					URL: u,
+				}
+
+				p := ParseFromRequest(req)
+				Expect(p.Offset).To(Equal(10))
+				Expect(p.Limit).To(Equal(100))
+			})
+
+			g.It("should parse pagination params from the headers", func() {
 				req := &http.Request{
 					Header: http.Header{},
 				}
 				req.Header.Set("Offset", "100")
 				req.Header.Set("Limit", "50")
 
-				p, err := ParseFromRequest(req)
-				Expect(err).To(BeNil())
+				p := ParseFromRequest(req)
 				Expect(p.Offset).To(Equal(100))
 				Expect(p.Limit).To(Equal(50))
+			})
+
+			g.It("should return the default pagination values when nothing is given", func() {
+				p := ParseFromRequest(&http.Request{})
+				Expect(p.Offset).To(Equal(DefaultOffset))
+				Expect(p.Limit).To(Equal(DefaultLimit))
 			})
 
 			g.It("should assume no offset when the offset is not in the request", func() {
@@ -154,8 +170,7 @@ func TestPagination(t *testing.T) {
 				}
 				req.Header.Set("Limit", "50")
 
-				p, err := ParseFromRequest(req)
-				Expect(err).To(BeNil())
+				p := ParseFromRequest(req)
 				Expect(p.Offset).To(Equal(0))
 				Expect(p.Limit).To(Equal(50))
 			})
@@ -167,8 +182,7 @@ func TestPagination(t *testing.T) {
 				req.Header.Set("Offset", "destroy")
 				req.Header.Set("Limit", "51")
 
-				p, err := ParseFromRequest(req)
-				Expect(err).To(BeNil())
+				p := ParseFromRequest(req)
 				Expect(p.Offset).To(Equal(0))
 				Expect(p.Limit).To(Equal(51))
 			})
@@ -179,8 +193,7 @@ func TestPagination(t *testing.T) {
 				}
 				req.Header.Set("Offset", "100")
 
-				p, err := ParseFromRequest(req)
-				Expect(err).To(BeNil())
+				p := ParseFromRequest(req)
 				Expect(p.Offset).To(Equal(100))
 				Expect(p.Limit).To(Equal(10))
 			})
@@ -192,8 +205,7 @@ func TestPagination(t *testing.T) {
 				req.Header.Set("Offset", "101")
 				req.Header.Set("Limit", "war_doctor")
 
-				p, err := ParseFromRequest(req)
-				Expect(err).To(BeNil())
+				p := ParseFromRequest(req)
 				Expect(p.Offset).To(Equal(101))
 				Expect(p.Limit).To(Equal(10))
 			})
