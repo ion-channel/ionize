@@ -45,6 +45,7 @@ Will read the configuration from the $PWD/.ionize.yaml file and begin an analysi
 
 		name := args[1]
 		version := args[2]
+		ty := "artifact"
 
 		rulesets, err := cli.GetRuleSets(team, key, nil)
 		if err != nil || rulesets == nil || len(rulesets) == 0 {
@@ -52,15 +53,15 @@ Will read the configuration from the $PWD/.ionize.yaml file and begin an analysi
 		}
 
 		project := &projects.Project{
-			Name:      name,
-			Branch:    version,
-			Source:    url,
-			Type:      "artifact",
+			Name:      &name,
+			Branch:    &version,
+			Source:    &url,
+			Type:      &ty,
 			POCEmail:  "",
 			POCName:   "",
-			TeamID:    team,
+			TeamID:    &team,
 			Active:    true,
-			RulesetID: rulesets[0].ID,
+			RulesetID: &rulesets[0].ID,
 		}
 		project, err = cli.CreateProject(project, team, key)
 		if err != nil {
@@ -69,7 +70,7 @@ Will read the configuration from the $PWD/.ionize.yaml file and begin an analysi
 				log.Fatalf("Failed to receive projects: %v", err.Error())
 			}
 			for i, p := range projects {
-				if p.Source == url && p.Branch == version {
+				if *p.Source == url && *p.Branch == version {
 					project = &projects[i]
 					break
 				}
@@ -78,15 +79,15 @@ Will read the configuration from the $PWD/.ionize.yaml file and begin an analysi
 				log.Fatalf("Failed to create project: %v", err.Error())
 			}
 		} else {
-			_, err = cli.AddAlias(project.ID, team, name, version, key)
+			_, err = cli.AddAlias(*project.ID, team, name, version, key)
 			if err != nil {
 				log.Fatalf("Failed to add alias to project, analysis depth will be reduced: %v", err.Error())
 			}
-			fmt.Printf("Created alias %s for %s (%s) %v", name, project.ID, project.TeamID, project.Aliases)
+			fmt.Printf("Created alias %s for %v (%v) %v", name, project.ID, project.TeamID, project.Aliases)
 		}
-		fmt.Printf("Created project: %s (%s) for %s\n", project.ID, project.TeamID, url)
+		fmt.Printf("Created project: %v (%v) for %s\n", project.ID, project.TeamID, url)
 
-		analysisStatus, err := cli.AnalyzeProject(project.ID, team, version, key)
+		analysisStatus, err := cli.AnalyzeProject(*project.ID, team, version, key)
 		if err != nil {
 			log.Fatalf("Analysis request failed for %v: %v", project.ID, err.Error())
 		}
@@ -96,17 +97,17 @@ Will read the configuration from the $PWD/.ionize.yaml file and begin an analysi
 		for analysisStatus.Status == "accepted" {
 			fmt.Print(".")
 			time.Sleep(10 * time.Second)
-			analysisStatus, err = cli.GetAnalysisStatus(id, team, project.ID, key)
+			analysisStatus, err = cli.GetAnalysisStatus(id, team, *project.ID, key)
 			if err != nil {
-				log.Fatalf("Analysis Status request failed for %s: %v", project.Name, err.Error())
+				log.Fatalf("Analysis Status request failed for %v: %v", project.Name, err.Error())
 			}
 		}
 		fmt.Printf("%s\n", analysisStatus.Status)
 
 		fmt.Println("Checking status of scans")
-		report, err := cli.GetAnalysisReport(id, team, project.ID, key)
+		report, err := cli.GetAnalysisReport(id, team, *project.ID, key)
 		if err != nil {
-			log.Fatalf("Analysis Report request failed for %s (%s): %v", project.Name, id, err.Error())
+			log.Fatalf("Analysis Report request failed for %v (%s): %v", project.Name, id, err.Error())
 		}
 
 		os.Exit(printReport(report))
