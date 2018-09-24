@@ -35,7 +35,9 @@ travis_setup: ## Setup the travis environmnet
 	@if [[ -n "$$BUILD_ENV" ]] && [[ "$$BUILD_ENV" == "testing" ]]; then echo -e "$(INFO_COLOR)THIS IS EXECUTING AGAINST THE TESTING ENVIRONMEMNT$(NO_COLOR)"; fi
 	@sudo /etc/init.d/postgresql stop
 	@echo "Installing AWS cli"
-	@sudo pip install awscli
+	@curl "https://s3.amazonaws.com/aws-cli/awscli-bundle.zip" -o "awscli-bundle.zip"
+	@unzip awscli-bundle.zip
+	@sudo /usr/bin/python3.4 ./awscli-bundle/install -i /usr/local/aws -b /usr/local/bin/aws
 	@echo "Downloading latest Ionize"
 	@wget --quiet https://s3.amazonaws.com/public.ionchannel.io/files/ionize/linux/bin/ionize
 	@chmod +x ionize && mkdir -p $$HOME/.local/bin && mv ionize $$HOME/.local/bin
