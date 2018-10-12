@@ -11,6 +11,7 @@ import (
 	"github.com/ion-channel/ionic"
 	"github.com/ion-channel/ionic/reports"
 	"github.com/ion-channel/ionic/scanner"
+	"github.com/ion-channel/ionize/cmd/external"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -41,18 +42,22 @@ Will read the configuration from the $PWD/.ionize.yaml file and begin an analysi
 			log.Fatalf("Analysis request failed for %s: %v", project, err.Error())
 		}
 		id := analysisStatus.ID
+		aID := &external.AnalysisID{
+			ID:        id,
+			TeamID:    team,
+			ProjectID: project,
+			APIKey:    key,
+		}
 
-		if viper.GetString("coverage") != "" {
-			coverage, err := loadCoverage(viper.GetString("coverage"))
+		if viper.IsSet("coverage") {
+			coverage, err := external.ParseCoverage(viper.GetString("coverage"))
 			if err != nil {
 				log.Fatalf("Analysis request failed for %s: %v", project, err.Error())
 			}
 
 			fmt.Println("Adding external coverage scan data")
 
-			scan := scanner.ExternalScan{}
-			scan.Coverage = coverage
-			analysisStatus, err = cli.AddScanResult(id, team, project, "accepted", "coverage", key, scan)
+			analysisStatus, err = coverage.Save(aID, cli)
 			if err != nil {
 				log.Fatalf("Analysis Report request failed for %s: %v", project, err.Error())
 			}
@@ -156,26 +161,6 @@ func loadVulnerabilities(path string) (*scanner.ExternalScan, error) {
 
 		fmt.Println("Found and loaded vulnerabilities file")
 		return &scan, nil
-	}
-	return nil, fmt.Errorf("File does not exist %s", path)
-}
-
-func loadCoverage(path string) (*scanner.ExternalCoverage, error) {
-	if _, err := os.Stat(path); !os.IsNotExist(err) {
-		fmt.Println("Reading coverage value from", path)
-		var value float64
-		f, err := os.Open(path)
-		defer f.Close()
-		if err != nil {
-			return nil, fmt.Errorf("Could not open coverage file %v", err.Error())
-		}
-
-		_, err = fmt.Fscanln(f, &value)
-		if err != nil {
-			return nil, fmt.Errorf("Could read coverage from coverage file %v", err.Error())
-		}
-		fmt.Println("Found coverage", value)
-		return &scanner.ExternalCoverage{Value: value}, nil
 	}
 	return nil, fmt.Errorf("File does not exist %s", path)
 }
