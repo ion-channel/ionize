@@ -6,11 +6,10 @@ import (
 
 	"github.com/ion-channel/ionic"
 	"github.com/ion-channel/ionic/scanner"
-	"github.com/spf13/viper"
 )
 
-func ParseCoverage(contents string) (*Coverage, error) {
-	coverage, err := loadCoverage(viper.GetString("coverage"))
+func ParseCoverage(path string) (*Coverage, error) {
+	coverage, err := loadCoverage(path)
 	if err != nil {
 		return nil, fmt.Errorf("Analysis request failed: %v", err.Error())
 	}
