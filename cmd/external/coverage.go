@@ -8,6 +8,8 @@ import (
 	"github.com/ion-channel/ionic/scanner"
 )
 
+// ParseCoverage - takes the path the the file containing
+// coverage data as a float
 func ParseCoverage(path string) (*Coverage, error) {
 	coverage, err := loadCoverage(path)
 	if err != nil {
@@ -19,10 +21,12 @@ func ParseCoverage(path string) (*Coverage, error) {
 	}, nil
 }
 
+// Coverage - encapsalates external code coverage data
 type Coverage struct {
 	Value *scanner.ExternalCoverage
 }
 
+//Save persists the code coverage external scan data
 func (c *Coverage) Save(aID *AnalysisID, cli *ionic.IonClient) (*scanner.AnalysisStatus, error) {
 	fmt.Println("Adding external coverage scan data")
 

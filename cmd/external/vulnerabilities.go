@@ -10,6 +10,8 @@ import (
 	"github.com/ion-channel/ionic/scanner"
 )
 
+//ParseVulnerabilities - given a path to a file containing Ion channel
+//formatted data will parse the file and return a struct representation
 func ParseVulnerabilities(path string) (*Vulnerabilities, error) {
 	eScan, err := loadVulnerabilities(path)
 	if err != nil {
@@ -21,10 +23,12 @@ func ParseVulnerabilities(path string) (*Vulnerabilities, error) {
 	}, nil
 }
 
+//Vulnerabilities struct representation of external vulnerability scan data
 type Vulnerabilities struct {
 	Value *scanner.ExternalScan
 }
 
+//Save sends the external vulnerability scan data to ion channel for persistance
 func (c *Vulnerabilities) Save(aID *AnalysisID, cli *ionic.IonClient) (*scanner.AnalysisStatus, error) {
 	fmt.Println("Adding external coverage scan data")
 
