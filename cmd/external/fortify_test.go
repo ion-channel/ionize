@@ -1,6 +1,7 @@
 package external
 
 import (
+	"os"
 	"path/filepath"
 	"strings"
 	"testing"
@@ -15,17 +16,17 @@ func TestFortify(t *testing.T) {
 
 	g.Describe("FPR file handling", func() {
 		g.It("should unzip and fpr file", func() {
-			dir, _ := filepath.Abs("/tmp")
+			dir, _ := filepath.Abs(filepath.Join(os.Getenv("PWD"), "..", ".."))
 
-			path, err := unzip(strings.Join([]string{dir, "fortifyResults-nginx-33.fpr"}, "/"))
+			path, err := unzip(strings.Join([]string{dir, "fortify.zip"}, "/"))
 			Expect(err).To(BeNil())
-			Expect(path).To(Equal("/tmp"))
+			Expect(path).To(ContainSubstring("github.com/ion-channel/ionize"))
 		})
 
 		g.It("should parse an fpr file", func() {
-			dir, _ := filepath.Abs("/tmp")
+			dir, _ := filepath.Abs(filepath.Join(os.Getenv("PWD"), "..", ".."))
 
-			path := strings.Join([]string{dir, "fortifyResults-nginx-33.fpr"}, "/")
+			path := strings.Join([]string{dir, "fortify.zip"}, "/")
 
 			fort, err := ParseFortify(path)
 			Expect(err).To(BeNil())
@@ -38,9 +39,9 @@ func TestFortify(t *testing.T) {
 		})
 
 		g.It("should gather all of the rules", func() {
-			dir, _ := filepath.Abs("/tmp")
+			dir, _ := filepath.Abs(filepath.Join(os.Getenv("PWD"), "..", ".."))
 
-			path := strings.Join([]string{dir, "fortifyResults-nginx-33.fpr"}, "/")
+			path := strings.Join([]string{dir, "fortify.zip"}, "/")
 
 			fort, _ := ParseFortify(path)
 
@@ -50,9 +51,9 @@ func TestFortify(t *testing.T) {
 		})
 
 		g.It("should get group value for rule and group name", func() {
-			dir, _ := filepath.Abs("/tmp")
+			dir, _ := filepath.Abs(filepath.Join(os.Getenv("PWD"), "..", ".."))
 
-			path := strings.Join([]string{dir, "fortifyResults-nginx-33.fpr"}, "/")
+			path := strings.Join([]string{dir, "fortify.zip"}, "/")
 
 			fort, _ := ParseFortify(path)
 
