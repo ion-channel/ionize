@@ -75,6 +75,20 @@ Will read the configuration from the $PWD/.ionize.yaml file and begin an analysi
 					log.Fatalf("Analysis Report request failed for %s: %v", project, err.Error())
 				}
 			}
+
+			if viper.IsSet("fortify") {
+				fortify, err := external.ParseFortify(viper.GetString("fortify"))
+				if err != nil {
+					log.Fatalf("Analysis request failed for %s: %v", project, err.Error())
+				}
+
+				fmt.Println("Adding external fortify scan data")
+
+				analysisStatus, err = fortify.Save(aID, cli)
+				if err != nil {
+					log.Fatalf("Analysis Report request failed for %s: %v", project, err.Error())
+				}
+			}
 		}
 
 		fmt.Print("Waiting for analysis to finish")
