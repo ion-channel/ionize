@@ -88,7 +88,7 @@ type Fortify struct {
 
 //Save sends the external vulnerability scan data to ion channel for persistance
 func (f *Fortify) Save(aID *AnalysisID, cli *ionic.IonClient) (*scanner.AnalysisStatus, error) {
-	fmt.Println("Adding external coverage scan data")
+	fmt.Println("Adding external fortify scan data")
 
 	analysisStatus, err := cli.AddScanResult(aID.ID, aID.TeamID, aID.ProjectID, "accepted", "vulnerability", aID.APIKey, *f.Value)
 	if err != nil {
