@@ -38,7 +38,7 @@ func ParseFortify(path string) (*Fortify, error) {
 	raw := json.RawMessage(fmt.Sprintf("{\"fpr\": \"%v\"}", path))
 
 	ex := scanner.ExternalScan{}
-	ex.Vulnerabilities = &scanner.ExternalVulnerabilities{}
+	ex.Vulnerability = &scanner.ExternalVulnerability{}
 
 	for _, v := range fvdl.Vulnerabilities.Vulnerability {
 		confidence, _ := strconv.ParseFloat(v.InstanceInfo.Confidence, 64)
@@ -53,19 +53,19 @@ func ParseFortify(path string) (*Fortify, error) {
 		// - 'Low' if impact < 2.5 && likelihood < 2.5.
 
 		if impact >= 2.5 && likelihood >= 2.5 {
-			ex.Vulnerabilities.Critcal++
+			ex.Vulnerability.Critcal++
 		}
 
 		if impact >= 2.5 && likelihood < 2.5 {
-			ex.Vulnerabilities.High++
+			ex.Vulnerability.High++
 		}
 
 		if impact < 2.5 && likelihood >= 2.5 {
-			ex.Vulnerabilities.Medium++
+			ex.Vulnerability.Medium++
 		}
 
 		if impact < 2.5 && likelihood < 2.5 {
-			ex.Vulnerabilities.Low++
+			ex.Vulnerability.Low++
 		}
 	}
 

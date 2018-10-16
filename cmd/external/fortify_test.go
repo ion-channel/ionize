@@ -32,10 +32,10 @@ func TestFortify(t *testing.T) {
 			Expect(err).To(BeNil())
 			Expect(fort.Value).NotTo(BeNil())
 			// matches the pdf for the fpr input
-			Expect(fort.Value.Vulnerabilities.Critcal).To(Equal(43))
-			Expect(fort.Value.Vulnerabilities.High).To(Equal(262))
-			Expect(fort.Value.Vulnerabilities.Medium).To(Equal(0))
-			Expect(fort.Value.Vulnerabilities.Low).To(Equal(79))
+			Expect(fort.Value.Vulnerability.Critcal).To(Equal(43))
+			Expect(fort.Value.Vulnerability.High).To(Equal(262))
+			Expect(fort.Value.Vulnerability.Medium).To(Equal(0))
+			Expect(fort.Value.Vulnerability.Low).To(Equal(79))
 		})
 
 		g.It("should gather all of the rules", func() {
