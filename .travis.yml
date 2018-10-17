@@ -15,7 +15,7 @@ script:
 notifications:
   email: false
 
-before_deploy: make crosscompile deploy
+before_deploy: make crosscompile
 
 deploy:
   - provider: s3
@@ -27,3 +27,9 @@ deploy:
     acl: public_read
     on:
       tags: true
+
+  - provider: script
+    script: make deploy
+    on:
+      tags: true
+      branch: master
