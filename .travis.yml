@@ -15,7 +15,7 @@ script:
 notifications:
   email: false
 
-before_deploy: make crosscompile
+before_deploy: make crosscompile deploy
 
 deploy:
   - provider: s3
