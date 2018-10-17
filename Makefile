@@ -63,9 +63,9 @@ deploy: #build
 	@echo "Logging into Docker Hub"
 	-@echo "$(DOCKER_PASSWORD)" | docker login -u "$(DOCKER_USERNAME)" --password-stdin
 
-	@if [[ "$(TRAVIS_TAG)" -ne "" ]] ; then  \
+	@if [[ ! -z "$(TRAVIS_TAG)" ]] ; then  \
 		echo "Pushing release image to Docker Hub" ; \
-		docker tag ionchannel/ionize:latest ionchannel ionize:$(TRAVIS_TAG) ; \
+		docker tag ionchannel/ionize:latest ionchannel/ionize:$(TRAVIS_TAG) ; \
 		docker push ionchannel/ionize:$(TRAVIS_TAG) ; \
 	fi
 
