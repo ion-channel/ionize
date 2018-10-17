@@ -1,5 +1,5 @@
 # Ionize
-[![Build Status](https://travis-ci.org/ion-channel/ionize.svg?branch=master)](https://travis-ci.org/ion-channel/ionize)
+[![Ion Channel Status](https://api.ionchannel.io/v1/report/getBadge?project_id=7f20da66-ea04-4a18-b772-04aebe6b8690&branch=master)](http://console.ionchannel.io/)[![Build Status](https://travis-ci.org/ion-channel/ionize.svg?branch=master)](https://travis-ci.org/ion-channel/ionize)
 [![Go Report Card](https://goreportcard.com/badge/github.com/ion-channel/ionize)](https://goreportcard.com/report/github.com/ion-channel/ionize)
 [![GoDoc](https://godoc.org/github.com/ion-channel/ionize?status.svg)](https://godoc.org/github.com/ion-channel/ionize)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/ion-channel/ionize/blob/master/LICENSE.md)
