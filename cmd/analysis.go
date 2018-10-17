@@ -51,9 +51,6 @@ Will read the configuration from the $PWD/.ionize.yaml file and begin an analysi
 			if err != nil {
 				log.Fatalf("Analysis request failed for %s: %v", project, err.Error())
 			}
-
-			fmt.Println("Adding external coverage scan data")
-
 			analysisStatus, err = coverage.Save(aID, cli)
 			if err != nil {
 				log.Fatalf("Analysis Report request failed for %s: %v", project, err.Error())
@@ -68,12 +65,21 @@ Will read the configuration from the $PWD/.ionize.yaml file and begin an analysi
 				if err != nil {
 					log.Fatalf("Analysis request failed for %s: %v", project, err.Error())
 				}
-
-				fmt.Println("Adding external vulnerabilities scan data")
 				analysisStatus, err = vulns.Save(aID, cli)
 				if err != nil {
 					log.Fatalf("Analysis Report request failed for %s: %v", project, err.Error())
 				}
+			}
+		}
+
+		if viper.IsSet("fortify") {
+			fortify, err := external.ParseFortify(viper.GetString("fortify"))
+			if err != nil {
+				log.Fatalf("Analysis request failed for %s: %v", project, err.Error())
+			}
+			analysisStatus, err = fortify.Save(aID, cli)
+			if err != nil {
+				log.Fatalf("Analysis Report request failed for %s: %v", project, err.Error())
 			}
 		}
 

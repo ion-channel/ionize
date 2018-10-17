@@ -1,5 +1,5 @@
-hash: 2c037c00b3c589efaa4b76bd68b197e26bff9f711ff0e168ed59b4416a28e0dc
-updated: 2018-09-14T14:35:51.388212-07:00
+hash: d03c1ab182c5aab6aca439d34573e1ebf2606a08f183d54ee311c96d4aa07d04
+updated: 2018-10-16T15:16:57.373801-07:00
 imports:
 - name: github.com/aws/aws-sdk-go
   version: 74ca63959be8b9a9a24cd86eaaea8bf99de8022d
@@ -36,7 +36,7 @@ imports:
 - name: github.com/fsnotify/fsnotify
   version: ccc981bf80385c528a65fbfdd49bf2d8da22aa23
 - name: github.com/go-ini/ini
-  version: fa25069db393aecc09b71267d0489b357781c860
+  version: 9c8236e659b76e87bf02044d06fde8683008ff3e
 - name: github.com/hashicorp/hcl
   version: 65a6292f0157eff210d03ed1bf6c59b190b8b906
   subpackages:
@@ -51,7 +51,7 @@ imports:
 - name: github.com/inconshreveable/mousetrap
   version: 76626ae9c91c4f2a10f34cad8ce83ea42c93bb75
 - name: github.com/ion-channel/ionic
-  version: 02581b2dac3bc1fa4ccf32dce842b69856d93de0
+  version: eb2732e10f91c72354857d363512eb39d5df490e
   subpackages:
   - aliases
   - analysis
@@ -68,6 +68,7 @@ imports:
   - scans
   - tags
   - teams
+  - teamusers
   - users
   - vulnerabilities
 - name: github.com/jmespath/go-jmespath
@@ -75,9 +76,9 @@ imports:
 - name: github.com/magiconair/properties
   version: c2353362d570a7bfa228149c62842019201cfb71
 - name: github.com/mitchellh/mapstructure
-  version: fa473d140ef3c6adf42d6b391fe76707f1f243c8
+  version: 3536a929edddb9a5b34bd6861dc4a9647cb459fe
 - name: github.com/pelletier/go-toml
-  version: c2dbbc24a97911339e01bda0b8cabdbd8f13b602
+  version: 81a861c69d25a841d0c4394f0e6f84bc8c5afae0
 - name: github.com/spf13/afero
   version: d40851caa0d747393da1ffb28f7f9d8b4eeffebd
   subpackages:
@@ -87,17 +88,17 @@ imports:
 - name: github.com/spf13/cobra
   version: 0dacccfbaabc71b872087c1719c5380d3e185173
 - name: github.com/spf13/jwalterweatherman
-  version: 4a4406e478ca629068e7768fc33f3f044173c0a6
+  version: 103a6da826d08544f49833dabd4f1cdf8a1038bb
 - name: github.com/spf13/pflag
   version: 298182f68c66c05229eb03ac171abe6e309ee79a
 - name: github.com/spf13/viper
   version: 25b30aa063fc18e48662b86996252eabdcf2f0c7
 - name: golang.org/x/sys
-  version: d0be0721c37eeb5299f245a996a483160fc36940
+  version: fa43e7bc11baaae89f3f902b2b4d832b68234844
   subpackages:
   - unix
 - name: golang.org/x/text
-  version: 905a57155faa8230500121607930ebb9dd8e139c
+  version: 4d1c5fb19474adfe9562c9847ba425e7da817e81
   subpackages:
   - encoding
   - encoding/charmap
@@ -139,7 +140,7 @@ testImports:
   - matchers/support/goraph/util
   - types
 - name: golang.org/x/net
-  version: 26e67e76b6c3f6ce91f7c52def5af501b4e0f3a2
+  version: 49bb7cea24b1df9410e1712aa6433dae904ff66a
   subpackages:
   - html
   - html/atom

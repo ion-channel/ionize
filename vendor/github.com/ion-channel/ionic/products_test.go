@@ -88,8 +88,8 @@ func TestProducts(t *testing.T) {
 			Expect(products[0].ID).To(Equal(39862))
 		})
 		g.It("should unmarshal search results with scores", func() {
-			searchResultJSON := `{"product":{"name":"django","language":"","source":null,"created_at":"2017-02-13T20:02:35.667Z","title":"Django Project Django 1.0-alpha-1","up":"alpha1","updated_at":"2017-02-13T20:02:35.667Z","edition":"","part":"/a","references":[],"version":"1.0","org":"djangoproject","external_id":"cpe:/a:djangoproject:django:1.0:alpha1","id":30955,"aliases":null},"github":{"committer_count":2,"uri":"https://github.com/monsooncommerce/gstats"},"mean_score":0.534,"scores":[{"term":"django","score":0.393},{"term":"1.0","score":0.842}]}`
-			var searchResult products.ProductSearchResult
+			searchResultJSON := `{"product":{"name":"django","language":"","source":null,"created_at":"2017-02-13T20:02:35.667Z","title":"Django Project Django 1.0-alpha-1","up":"alpha1","updated_at":"2017-02-13T20:02:35.667Z","edition":"","part":"/a","references":[],"version":"1.0","org":"djangoproject","external_id":"cpe:/a:djangoproject:django:1.0:alpha1","id":30955,"aliases":null},"github":{"committer_count":2,"uri":"https://github.com/monsooncommerce/gstats"},"confidence":0.534,"scores":[{"term":"django","score":0.393},{"term":"1.0","score":0.842}]}`
+			var searchResult products.SoftwareEntity
 			err := json.Unmarshal([]byte(searchResultJSON), &searchResult)
 			Expect(err).NotTo(HaveOccurred())
 			Expect(searchResult.Product.Up).To(Equal("alpha1"))
@@ -98,7 +98,7 @@ func TestProducts(t *testing.T) {
 			Expect(searchResult.Scores[1].Term).To(Equal("1.0"))
 			Expect(fmt.Sprintf("%.3f", searchResult.Scores[0].Score)).To(Equal("0.393"))
 			Expect(fmt.Sprintf("%.3f", searchResult.Scores[1].Score)).To(Equal("0.842"))
-			Expect(fmt.Sprintf("%.3f", searchResult.MeanScore)).To(Equal("0.534"))
+			Expect(fmt.Sprintf("%.3f", searchResult.Confidence)).To(Equal("0.534"))
 		})
 		g.It("should marshal search results with scores", func() {
 			product := products.Product{
@@ -116,19 +116,67 @@ func TestProducts(t *testing.T) {
 			scores := []products.ProductSearchScore{
 				{Term: "foo", Score: 3.2},
 			}
-			searchResult := products.ProductSearchResult{
-				Product:   product,
-				Github:    github,
-				MeanScore: 3.6,
-				Scores:    scores,
+			searchResult := products.SoftwareEntity{
+				Product:    &product,
+				Github:     &github,
+				Confidence: 3.6,
+				Scores:     scores,
 			}
 			b, err := json.Marshal(searchResult)
 			Expect(err).NotTo(HaveOccurred())
 			s := string(b)
 			Expect(s).To(MatchRegexp(`"name":\s*"product name"`))
-			Expect(s).To(MatchRegexp(`"mean_score":\s*3.6`))
+			Expect(s).To(MatchRegexp(`"confidence":\s*3.6`))
 			Expect(s).To(MatchRegexp(`"score":\s*3.2`))
 			Expect(s).To(MatchRegexp(`"term":\s*"foo"`))
+		})
+		g.It("should unmarshal search results with packages", func() {
+			searchResultJSON := `{"product":{"id":1234,"name":"product name","org":"some org","version":"3.1.2","up":"","edition":"","aliases":null,"created_at":"0001-01-01T00:00:00Z","updated_at":"0001-01-01T00:00:00Z","title":"mah title","references":null,"part":"","language":"","external_id":"cpe:/a:djangoproject:django:1.0:alpha1","source":null},"github":{"uri":"https://github.com/some/repo","committer_count":5},"package":{"name":"mahProject","version":"2.3.6","type":"pypi"},"confidence":3.6,"scores":[{"term":"foo","score":3.2}]}`
+			var searchResult products.SoftwareEntity
+			err := json.Unmarshal([]byte(searchResultJSON), &searchResult)
+			Expect(err).NotTo(HaveOccurred())
+			Expect(searchResult.Package).NotTo(BeNil())
+			Expect(searchResult.Package.Name).To(Equal("mahProject"))
+			Expect(searchResult.Package.Version).To(Equal("2.3.6"))
+			Expect(searchResult.Package.Type).To(Equal("pypi"))
+		})
+		g.It("should marshal search results with packages", func() {
+			product := products.Product{
+				ID:         1234,
+				Name:       "product name",
+				Org:        "some org",
+				Version:    "3.1.2",
+				Title:      "mah title",
+				ExternalID: "cpe:/a:djangoproject:django:1.0:alpha1",
+			}
+			github := products.Github{
+				URI:            "https://github.com/some/repo",
+				CommitterCount: 5,
+			}
+			pkg := products.Package{
+				Name:    "mahProject",
+				Version: "2.3.6",
+				Type:    "pypi",
+			}
+			scores := []products.ProductSearchScore{
+				{Term: "foo", Score: 3.2},
+			}
+			searchResult := products.SoftwareEntity{
+				Product:    &product,
+				Github:     &github,
+				Package:    &pkg,
+				Confidence: 3.6,
+				Scores:     scores,
+			}
+			b, err := json.Marshal(searchResult)
+			Expect(err).NotTo(HaveOccurred())
+			s := string(b)
+			Expect(s).To(MatchRegexp(`"name":\s*"product name"`))
+			Expect(s).To(MatchRegexp(`"confidence":\s*3.6`))
+			Expect(s).To(MatchRegexp(`"score":\s*3.2`))
+			Expect(s).To(MatchRegexp(`"term":\s*"foo"`))
+			Expect(s).To(MatchRegexp(`"package":\s*{`))
+			Expect(s).To(MatchRegexp(`"name":\s*"mahProject"`))
 		})
 		g.It("should post a product request", func() {
 			server.AddPath("/v1/product/search").
