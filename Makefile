@@ -55,6 +55,24 @@ analyze:  ## Perform an analysis of the project
 .PHONY: build
 build: ## Build the project
 	CGO_ENABLED=$(CGO_ENABLED) GOOS=$(GOOS) $(GOBUILD) -ldflags "-X main.buildTime=$(DATE) -X main.appVersion=$(BUILD_VERSION)" -o $(APP) .
+	@echo "Building latest image"
+	@docker build -t ionchannel/ionize .
+
+.PHONY: deploy
+deploy: #build
+	@echo "Logging into Docker Hub"
+	-@echo "$(DOCKER_PASSWORD)" | docker login -u "$(DOCKER_USERNAME)" --password-stdin
+
+	@if [[ "$(TRAVIS_TAG)" -ne "" ]] ; then  \
+		echo "Pushing release image to Docker Hub" ; \
+		docker tag ionchannel/ionize:latest ionchannel ionize:$(TRAVIS_TAG) ; \
+		docker push ionchannel/ionize:$(TRAVIS_TAG) ; \
+	fi
+
+	@if [[ "master" == "$(TRAVIS_BRANCH)" ]] ; then \
+		echo "Pushing image to Docker Hub" ; \
+		docker push ionchannel/ionize:latest ; \
+	fi
 
 .PHONY: clean
 clean:  ## Clean out all generated files
