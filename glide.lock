@@ -1,5 +1,5 @@
-hash: d03c1ab182c5aab6aca439d34573e1ebf2606a08f183d54ee311c96d4aa07d04
-updated: 2018-10-16T15:16:57.373801-07:00
+hash: ea83f1e3b720f215a496e221f0a6b771f40cdc3097ec53db524f02975422fe49
+updated: 2018-10-26T11:34:20.469598-07:00
 imports:
 - name: github.com/aws/aws-sdk-go
   version: 74ca63959be8b9a9a24cd86eaaea8bf99de8022d
@@ -51,7 +51,7 @@ imports:
 - name: github.com/inconshreveable/mousetrap
   version: 76626ae9c91c4f2a10f34cad8ce83ea42c93bb75
 - name: github.com/ion-channel/ionic
-  version: eb2732e10f91c72354857d363512eb39d5df490e
+  version: ab6c437bcae156e95f7c25cc7c2b34d96d9ca54a
   subpackages:
   - aliases
   - analysis
@@ -84,17 +84,17 @@ imports:
   subpackages:
   - mem
 - name: github.com/spf13/cast
-  version: 8965335b8c7107321228e3e3702cab9832751bac
+  version: 8c9545af88b134710ab1cd196795e7f2388358d7
 - name: github.com/spf13/cobra
   version: 0dacccfbaabc71b872087c1719c5380d3e185173
 - name: github.com/spf13/jwalterweatherman
   version: 103a6da826d08544f49833dabd4f1cdf8a1038bb
 - name: github.com/spf13/pflag
-  version: 298182f68c66c05229eb03ac171abe6e309ee79a
+  version: 082b515c9490f4eccc758469c3152b77d139f868
 - name: github.com/spf13/viper
   version: 25b30aa063fc18e48662b86996252eabdcf2f0c7
 - name: golang.org/x/sys
-  version: fa43e7bc11baaae89f3f902b2b4d832b68234844
+  version: 2772b66316d2c587efeb188dcd5ebc6987656e84
   subpackages:
   - unix
 - name: golang.org/x/text
@@ -140,7 +140,7 @@ testImports:
   - matchers/support/goraph/util
   - types
 - name: golang.org/x/net
-  version: 49bb7cea24b1df9410e1712aa6433dae904ff66a
+  version: 9b4f9f5ad5197c79fd623a3638e70d8b26cef344
   subpackages:
   - html
   - html/atom
