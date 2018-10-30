@@ -3,16 +3,13 @@ package cmd
 import (
 	"fmt"
 	"log"
-	"net/url"
 	"os"
 	"time"
 
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/session"
-	"github.com/aws/aws-sdk-go/service/s3/s3manager"
 	"github.com/ion-channel/ionic"
 	"github.com/ion-channel/ionic/pagination"
 	"github.com/ion-channel/ionic/projects"
+	"github.com/ion-channel/ionize/dropbox"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -38,7 +35,12 @@ Will read the configuration from the $PWD/.ionize.yaml file and begin an analysi
 			log.Fatalf("Failed to create Ion Channel Client: %v", err.Error())
 		}
 
-		url, err := parseURL(args[0])
+		rando, err := dropbox.Randomizer()
+		if err != nil {
+			log.Fatalf("Failed to parse url: %v\n", err.Error())
+		}
+
+		url, err := dropbox.ParseURL(args[0], rando)
 		if err != nil {
 			log.Fatalf("Failed to parse url: %v\n", err.Error())
 		}
@@ -112,38 +114,4 @@ Will read the configuration from the $PWD/.ionize.yaml file and begin an analysi
 
 		os.Exit(printReport(report))
 	},
-}
-
-func parseURL(input string) (string, error) {
-	url, err := url.Parse(input)
-	if err != nil {
-		return "", fmt.Errorf("failed to parse url: %v", err.Error())
-	}
-
-	if url.Scheme == "file" {
-		// get reader
-		f, err := os.Open(url.Hostname() + url.EscapedPath())
-		if err != nil {
-			return "", fmt.Errorf("failed to read file for url (%s): %v", url.String(), err.Error())
-		}
-		// upload to dropbox.ionchannel.io
-		mySession, _ := session.NewSession(&aws.Config{
-			Region: aws.String("us-east-1"),
-		})
-		uploader := s3manager.NewUploader(mySession)
-		result, err := uploader.Upload(&s3manager.UploadInput{
-			Bucket: aws.String("dropbox.ionchannel.io"),
-			Key:    aws.String("ionize/" + f.Name()),
-			Body:   f,
-		})
-
-		if err != nil {
-			return "", fmt.Errorf("failed to write file to Ion Channel: %v", err.Error())
-		}
-		// get url to upload
-		return result.Location, nil
-		// return s3 upload
-	}
-
-	return url.String(), nil
 }

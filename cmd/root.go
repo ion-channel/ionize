@@ -10,8 +10,9 @@ import (
 )
 
 const (
-	key = "IONCHANNEL_SECRET_KEY"
-	api = "IONCHANNEL_ENDPOINT_URL"
+	key    = "IONCHANNEL_SECRET_KEY"
+	api    = "IONCHANNEL_ENDPOINT_URL"
+	bucket = "IONCHANNEL_DROP_BUCKET"
 )
 
 var (
@@ -38,11 +39,13 @@ func init() {
 
 func initDefaults() {
 	viper.SetDefault("api", "https://api.ionchannel.io")
+	viper.SetDefault("bucket", "dropbox.ionchannel.io")
 }
 
 func initEnvs() {
 	viper.BindEnv("key", key)
 	viper.BindEnv("api", api)
+	viper.BindEnv("bucket", bucket)
 }
 
 func initConfig() {

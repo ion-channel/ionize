@@ -14,6 +14,7 @@ import (
 
 	"github.com/ion-channel/ionic"
 	"github.com/ion-channel/ionic/scanner"
+	"github.com/ion-channel/ionize/dropbox"
 )
 
 //ParseFortify a Fortify FPR file at the path provided
@@ -35,8 +36,17 @@ func ParseFortify(path string) (*Fortify, error) {
 	if err != nil {
 		return nil, err
 	}
-	raw := json.RawMessage(fmt.Sprintf("{\"fpr\": \"%v\"}", path))
 
+	rando, err := dropbox.Randomizer()
+	if err != nil {
+		return nil, err
+	}
+
+	erl, err := dropbox.ParseURL(path, rando)
+	if err != nil {
+		return nil, err
+	}
+	raw := json.RawMessage(fmt.Sprintf("{\"fpr\": \"%v\"}", erl))
 	ex := scanner.ExternalScan{}
 	ex.Vulnerability = &scanner.ExternalVulnerability{}
 
@@ -47,11 +57,6 @@ func ParseFortify(path string) (*Fortify, error) {
 		accuracy, _ := strconv.ParseFloat(fvdl.Group(v.ClassInfo.ClassID, Accuracy), 64)
 
 		likelihood := (accuracy * confidence * probability) / 25
-		// - 'Critical' if Impact >=2.5 && Likelihood >= 2.5.
-		// - 'High' If Impact >=2.5 && Likelihood < 2.5.
-		// - 'Medium' If Impact < 2.5 && Likelihood >= 2.5.
-		// - 'Low' if impact < 2.5 && likelihood < 2.5.
-
 		if impact >= 2.5 && likelihood >= 2.5 {
 			ex.Vulnerability.Critcal++
 		}
