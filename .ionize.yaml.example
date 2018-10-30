@@ -1,7 +1,23 @@
+# Specify your Ion Channel API token
 key: ion channel api token
-# for use in no production environments
+
+# For use in non production/testing environments
 # api: https://api.test.ionchannel.io/
+
+# The team id of the team your project resides in
 team: team id
+
+# The project id of the Ion Channel project record
 project: project id
-# specify the location of the coverage value
+
+# Specify the location of the coverage value
+# must be a float value
 coverage: coverage.txt
+
+# Path to a Fortify FPR file use to determine
+# external vulnerabilities
+fortify: file.fpr
+
+# Name of the S3 bucket used for temporary
+# storage of the fortify file
+bucket: s3-bucket
