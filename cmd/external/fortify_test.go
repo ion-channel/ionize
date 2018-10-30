@@ -1,20 +1,44 @@
 package external
 
 import (
+	"net/http"
+	"net/http/httptest"
 	"os"
 	"path/filepath"
 	"strings"
 	"testing"
 
+	"github.com/aws/aws-sdk-go/aws/request"
+	"github.com/aws/aws-sdk-go/service/s3"
+	"github.com/aws/aws-sdk-go/service/s3/s3iface"
+	"github.com/aws/aws-sdk-go/service/s3/s3manager"
 	. "github.com/franela/goblin"
+	"github.com/ion-channel/ionize/dropbox"
 	. "github.com/onsi/gomega"
 )
+
+type mockS3Client struct {
+	s3iface.S3API
+}
+
+func (c mockS3Client) PutObjectRequest(input *s3.PutObjectInput) (req *request.Request, output *s3.PutObjectOutput) {
+	out := s3.PutObjectOutput{}
+	req = new(request.Request)
+	r := httptest.NewRequest(http.MethodGet, "/login", nil)
+	req.HTTPRequest = r
+	return req, &out
+}
 
 func TestFortify(t *testing.T) {
 	g := Goblin(t)
 	RegisterFailHandler(func(m string, _ ...int) { g.Fail(m) })
 
 	g.Describe("FPR file handling", func() {
+		g.BeforeEach(func() {
+			mc := mockS3Client{}
+			dropbox.Uploader = s3manager.NewUploaderWithClient(mc)
+		})
+
 		g.It("should unzip and fpr file", func() {
 			dir, _ := filepath.Abs(filepath.Join(os.Getenv("PWD"), "..", ".."))
 
@@ -43,7 +67,8 @@ func TestFortify(t *testing.T) {
 
 			path := strings.Join([]string{dir, "fortify.zip"}, "/")
 
-			fort, _ := ParseFortify(path)
+			fort, err := ParseFortify(path)
+			Expect(err).To(BeNil())
 
 			rules := fort.FVDL.Rules()
 			Expect(rules).NotTo(BeNil())
