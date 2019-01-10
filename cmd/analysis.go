@@ -93,6 +93,9 @@ Will read the configuration from the $PWD/.ionize.yaml file and begin an analysi
 			}
 		}
 		fmt.Printf("%s\n", analysisStatus.Status)
+		if analysisStatus.Status == "errored" {
+			log.Fatalf("Analysis error occured: %v", analysisStatus.Message)
+		}
 
 		fmt.Println("Checking status of scans")
 		report, err := cli.GetAnalysisReport(id, team, project, key)
