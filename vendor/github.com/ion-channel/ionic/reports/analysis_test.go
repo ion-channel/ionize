@@ -5,9 +5,10 @@ import (
 	"testing"
 
 	"github.com/ion-channel/ionic/aliases"
-	"github.com/ion-channel/ionic/analysis"
+	"github.com/ion-channel/ionic/analyses"
 	"github.com/ion-channel/ionic/projects"
 	"github.com/ion-channel/ionic/rulesets"
+	"github.com/ion-channel/ionic/scanner"
 	"github.com/ion-channel/ionic/scans"
 	"github.com/ion-channel/ionic/tags"
 
@@ -22,10 +23,15 @@ func TestAnalysisReport(t *testing.T) {
 	g.Describe("Analysis Report", func() {
 		g.Describe("New Analysis Report", func() {
 			g.It("should return a new analysis report", func() {
+				s := &scanner.AnalysisStatus{
+					Status:  "finished",
+					Message: "analysis finished",
+				}
+
 				// Note: Once the scans and other objects no longer have the private
 				// anonymous fields, this can be changed to use a struct literal
 				// initialization of the analysis instead of from json
-				var a analysis.Analysis
+				var a analyses.Analysis
 				json.Unmarshal([]byte(sampleAnalysisPayload), &a)
 				Expect(a.ID).To(Equal("f9bca953-80ac-46c4-b195-d37f3bc4f498"))
 
@@ -53,12 +59,12 @@ func TestAnalysisReport(t *testing.T) {
 					},
 				}
 
-				ar, err := NewAnalysisReport(&a, p, app)
+				ar, err := NewAnalysisReport(s, &a, p, app)
 				Expect(err).To(BeNil())
 				Expect(ar).NotTo(BeNil())
 
 				Expect(ar.RulesetName).To(Equal("super cool ruleset"))
-				Expect(ar.Status).To(Equal("finished"))
+				Expect(ar.Statuses.Status).To(Equal("finished"))
 				Expect(ar.Risk).To(Equal("low"))
 				Expect(ar.Passed).To(Equal(true))
 				Expect(len(ar.Aliases)).To(Equal(1))
@@ -77,18 +83,23 @@ func TestAnalysisReport(t *testing.T) {
 				Expect(ar.ScanSummaries[0].Results).NotTo(BeNil())
 				Expect(len(ar.ScanSummaries[0].Results)).NotTo(Equal(0))
 
-				lr, ok := ar.ScanSummaries[0].TranslatedResults.Data.(*scans.LicenseResults)
-				Expect(ok).To(BeTrue())
+				lr, ok := ar.ScanSummaries[0].TranslatedResults.Data.(scans.LicenseResults)
+				Expect(ok).To(BeTrue(), "Expected LicenseResults type")
 				Expect(lr.Type).To(HaveLen(1))
 				Expect(lr.Type[0].Name).To(Equal("apache-2.0"))
 				Expect(lr.Name).To(Equal("LICENSE.md"))
 			})
 
 			g.It("should return a new analysis report even if the analysis contains translated results", func() {
+				s := &scanner.AnalysisStatus{
+					Status:  "finished",
+					Message: "analysis finished",
+				}
+
 				// Note: Once the scans and other objects no longer have the private
 				// anonymous fields, this can be changed to use a struct literal
 				// initialization of the analysis instead of from json
-				var a analysis.Analysis
+				var a analyses.Analysis
 				json.Unmarshal([]byte(sampleAnalysisPayload), &a)
 				Expect(a.ID).To(Equal("f9bca953-80ac-46c4-b195-d37f3bc4f498"))
 
@@ -116,12 +127,12 @@ func TestAnalysisReport(t *testing.T) {
 					},
 				}
 
-				ar, err := NewAnalysisReport(&a, p, app)
+				ar, err := NewAnalysisReport(s, &a, p, app)
 				Expect(err).To(BeNil())
 				Expect(ar).NotTo(BeNil())
 
 				Expect(ar.RulesetName).To(Equal("super cool ruleset"))
-				Expect(ar.Status).To(Equal("finished"))
+				Expect(ar.Statuses.Status).To(Equal("finished"))
 				Expect(ar.Risk).To(Equal("low"))
 				Expect(ar.Passed).To(Equal(true))
 				Expect(len(ar.Aliases)).To(Equal(1))

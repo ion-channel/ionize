@@ -84,7 +84,7 @@ Will read the configuration from the $PWD/.ionize.yaml file and begin an analysi
 		}
 
 		fmt.Print("Waiting for analysis to finish")
-		for analysisStatus.Status == "accepted" {
+		for !analysisStatus.Done() {
 			fmt.Print(".")
 			time.Sleep(10 * time.Second)
 			analysisStatus, err = cli.GetAnalysisStatus(id, team, project, key)
