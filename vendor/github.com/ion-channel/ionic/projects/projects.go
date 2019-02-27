@@ -4,7 +4,10 @@ import (
 	"crypto/x509"
 	"encoding/pem"
 	"fmt"
+	"net/http"
+	"net/url"
 	"regexp"
+	"strings"
 	"time"
 
 	"github.com/ion-channel/ionic/aliases"
@@ -12,7 +15,8 @@ import (
 )
 
 const (
-	validEmailRegex = `^[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,}$`
+	validEmailRegex  = `^[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,}$`
+	validGitURIRegex = `^(?:(?:http|ftp|gopher|mailto|mid|cid|news|nntp|prospero|telnet|rlogin|tn3270|wais|svn|git|rsync)+\+ssh\:\/\/|git\+https?:\/\/|git\@|(?:http|ftp|gopher|mailto|mid|cid|news|nntp|prospero|telnet|rlogin|tn3270|wais|svn|git|rsync|ssh|file)+s?:\/\/)[^\s]+$`
 )
 
 var (
@@ -42,14 +46,16 @@ type Project struct {
 	Username       string          `json:"username"`
 	Password       string          `json:"password"`
 	KeyFingerprint string          `json:"key_fingerprint"`
+	Private        bool            `json:"private"`
 	Aliases        []aliases.Alias `json:"aliases"`
 	Tags           []tags.Tag      `json:"tags"`
 }
 
-// Validate returns a slice of fields as a string and an error. The fields will
-// be a list of fields that did not pass the validation. An error will only be
-// returned if any of the fields fail their validation.
-func (p *Project) Validate() (map[string]string, error) {
+// Validate takes an http client and returns a slice of fields as a string and
+// an error. The fields will be a list of fields that did not pass the
+// validation. An error will only be returned if any of the fields fail their
+// validation.
+func (p *Project) Validate(client *http.Client) (map[string]string, error) {
 	invalidFields := make(map[string]string)
 	var projErr error
 
@@ -83,7 +89,7 @@ func (p *Project) Validate() (map[string]string, error) {
 		projErr = ErrInvalidProject
 	}
 
-	if p.Branch == nil {
+	if p.Branch == nil && p.Type != nil && strings.ToLower(*p.Type) == "git" {
 		invalidFields["branch"] = "missing branch"
 		projErr = ErrInvalidProject
 	}
@@ -97,6 +103,15 @@ func (p *Project) Validate() (map[string]string, error) {
 	if p.POCEmail != "" && !r.MatchString(p.POCEmail) {
 		invalidFields["poc_email"] = "invalid email supplied"
 		projErr = ErrInvalidProject
+	}
+
+	isFinger, err := regexp.MatchString("[a-f0-9]{2}\\:[a-f0-9]{2}\\:[a-f0-9]{2}\\:", p.DeployKey)
+	if err != nil {
+		return nil, fmt.Errorf("failed to detect deploy key fingerprint: %v", err.Error())
+	}
+
+	if isFinger {
+		p.DeployKey = ""
 	}
 
 	block, rest := pem.Decode([]byte(p.DeployKey))
@@ -117,6 +132,36 @@ func (p *Project) Validate() (map[string]string, error) {
 	if block == nil && rest != nil && string(rest) != "" {
 		invalidFields["deploy_key"] = "must be a valid ssh key"
 		projErr = ErrInvalidProject
+	}
+
+	if p.Type != nil {
+		switch strings.ToLower(*p.Type) {
+		case "artifact":
+			u, err := url.Parse(*p.Source)
+			if err != nil {
+				invalidFields["source"] = fmt.Sprintf("source must be a valid url: %v", err.Error())
+				projErr = ErrInvalidProject
+			}
+
+			if u != nil {
+				res, err := client.Head(u.String())
+				if err != nil {
+					invalidFields["source"] = "source failed to return a response"
+					projErr = ErrInvalidProject
+				}
+
+				if res != nil && res.StatusCode == http.StatusNotFound {
+					invalidFields["source"] = "source returned a not found"
+					projErr = ErrInvalidProject
+				}
+			}
+		case "git", "svn":
+			r := regexp.MustCompile(validGitURIRegex)
+			if p.Source != nil && !r.MatchString(*p.Source) {
+				invalidFields["source"] = "source must be a valid uri"
+				projErr = ErrInvalidProject
+			}
+		}
 	}
 
 	return invalidFields, projErr

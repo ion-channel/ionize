@@ -1,5 +1,5 @@
-hash: ea83f1e3b720f215a496e221f0a6b771f40cdc3097ec53db524f02975422fe49
-updated: 2018-10-26T11:34:20.469598-07:00
+hash: ea8d9005e2d2a3350a10f1c7ab4083edd2f63050be598150e246df7909b9abeb
+updated: 2019-02-27T14:54:00.994522-08:00
 imports:
 - name: github.com/aws/aws-sdk-go
   version: 74ca63959be8b9a9a24cd86eaaea8bf99de8022d
@@ -36,7 +36,7 @@ imports:
 - name: github.com/fsnotify/fsnotify
   version: ccc981bf80385c528a65fbfdd49bf2d8da22aa23
 - name: github.com/go-ini/ini
-  version: 9c8236e659b76e87bf02044d06fde8683008ff3e
+  version: fa25069db393aecc09b71267d0489b357781c860
 - name: github.com/hashicorp/hcl
   version: 65a6292f0157eff210d03ed1bf6c59b190b8b906
   subpackages:
@@ -51,12 +51,14 @@ imports:
 - name: github.com/inconshreveable/mousetrap
   version: 76626ae9c91c4f2a10f34cad8ce83ea42c93bb75
 - name: github.com/ion-channel/ionic
-  version: ab6c437bcae156e95f7c25cc7c2b34d96d9ca54a
+  version: 809b4578e7b58573b4b0cee5b7e1d5a67b4811d8
   subpackages:
   - aliases
-  - analysis
+  - analyses
   - community
   - dependencies
+  - digests
+  - errors
   - events
   - pagination
   - products
@@ -74,13 +76,13 @@ imports:
 - name: github.com/jmespath/go-jmespath
   version: c2b33e8439af944379acbdd9c3a5fe0bc44bd8a5
 - name: github.com/magiconair/properties
-  version: c2353362d570a7bfa228149c62842019201cfb71
+  version: 7757cc9fdb852f7579b24170bcacda2c7471bb6a
 - name: github.com/mitchellh/mapstructure
   version: 3536a929edddb9a5b34bd6861dc4a9647cb459fe
 - name: github.com/pelletier/go-toml
-  version: 81a861c69d25a841d0c4394f0e6f84bc8c5afae0
+  version: 27c6b39a135b7dc87a14afb068809132fb7a9a8f
 - name: github.com/spf13/afero
-  version: d40851caa0d747393da1ffb28f7f9d8b4eeffebd
+  version: f4711e4db9e9a1d3887343acb72b2bbfc2f686f5
   subpackages:
   - mem
 - name: github.com/spf13/cast
@@ -88,17 +90,17 @@ imports:
 - name: github.com/spf13/cobra
   version: 0dacccfbaabc71b872087c1719c5380d3e185173
 - name: github.com/spf13/jwalterweatherman
-  version: 103a6da826d08544f49833dabd4f1cdf8a1038bb
+  version: 94f6ae3ed3bceceafa716478c5fbf8d29ca601a1
 - name: github.com/spf13/pflag
-  version: 082b515c9490f4eccc758469c3152b77d139f868
+  version: 24fa6976df40757dce6aea913e7b81ade90530e1
 - name: github.com/spf13/viper
   version: 25b30aa063fc18e48662b86996252eabdcf2f0c7
 - name: golang.org/x/sys
-  version: 2772b66316d2c587efeb188dcd5ebc6987656e84
+  version: 775f8194d0f9e65c46913c7be783d3d95a29333c
   subpackages:
   - unix
 - name: golang.org/x/text
-  version: 4d1c5fb19474adfe9562c9847ba425e7da817e81
+  version: 905a57155faa8230500121607930ebb9dd8e139c
   subpackages:
   - encoding
   - encoding/charmap
@@ -140,7 +142,7 @@ testImports:
   - matchers/support/goraph/util
   - types
 - name: golang.org/x/net
-  version: 9b4f9f5ad5197c79fd623a3638e70d8b26cef344
+  version: 26e67e76b6c3f6ce91f7c52def5af501b4e0f3a2
   subpackages:
   - html
   - html/atom

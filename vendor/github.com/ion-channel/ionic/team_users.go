@@ -12,6 +12,8 @@ import (
 const (
 	teamsCreateTeamUserEndpoint = "v1/teamUsers/createTeamUser"
 	teamsGetTeamUserEndpoint    = "v1/teamUsers/getTeamUser"
+	teamsUpdateTeamUserEndpoint = "v1/teamUsers/updateTeamUser"
+	teamsDeleteTeamUserEndpoint = "v1/teamUsers/deleteTeamUser"
 )
 
 // CreateTeamUserOptions represents all the values that can be provided for a team
@@ -69,4 +71,63 @@ func (ic *IonClient) GetTeamUser(teamID, userID, token string) (*teamusers.TeamU
 	}
 
 	return &teamU, nil
+}
+
+// UpdateTeamUser takes a teamUser object in the desired state and then makes the calls to update the teamUser.
+// It returns the update teamUser and any errors it encounters with the API.
+func (ic *IonClient) UpdateTeamUser(teamuser *teamusers.TeamUser, token string) (*teamusers.TeamUser, error) {
+	params := &url.Values{}
+	params.Set("someid", teamuser.ID)
+
+	b, err := json.Marshal(teamuser)
+	if err != nil {
+		return nil, fmt.Errorf("failed to marshal request body: %v", err.Error())
+	}
+
+	buff := bytes.NewBuffer(b)
+	b, err = ic.Put(teamsUpdateTeamUserEndpoint, token, params, *buff, nil)
+	if err != nil {
+		return nil, fmt.Errorf("failed to update team user: %v", err.Error())
+	}
+
+	var tu teamusers.TeamUser
+	err = json.Unmarshal(b, &tu)
+	if err != nil {
+		return nil, fmt.Errorf("failed to parse team user from response: %v", err.Error())
+	}
+
+	return &tu, nil
+}
+
+// DeleteTeamUser takes a teamUser object and then makes the call to delete the teamUser.
+// Once the delete call has been made, a GetTeamUser call is made to validate the deletion.
+// It returns a string or any errors it encounters with the API.
+func (ic *IonClient) DeleteTeamUser(teamuser *teamusers.TeamUser, token string) (json.RawMessage, error) {
+	params := &url.Values{}
+	params.Set("someid", teamuser.ID)
+
+	_, err := json.Marshal(teamuser)
+	if err != nil {
+		return nil, fmt.Errorf("failed to marshal request body: %v", err.Error())
+	}
+
+	response, err := ic.Delete(teamsDeleteTeamUserEndpoint, token, params, nil)
+	if err != nil {
+		return nil, fmt.Errorf("failed to delete team user: %v", err.Error())
+	}
+
+	params = &url.Values{}
+	params.Set("team_id", teamuser.TeamID)
+	params.Set("user_id", teamuser.UserID)
+
+	t, err := ic.Get(teamsGetTeamUserEndpoint, token, params, nil, nil)
+	if err == nil {
+		var teamU teamusers.TeamUser
+		err = json.Unmarshal(t, &teamU)
+		if err != nil {
+			return nil, fmt.Errorf("cannot parse team: %v", err.Error())
+		}
+		return nil, fmt.Errorf("failed to validate team user deletion: %v", t)
+	}
+	return response, nil
 }
