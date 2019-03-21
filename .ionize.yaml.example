@@ -19,5 +19,6 @@ coverage: coverage.txt
 fortify: file.fpr
 
 # Name of the S3 bucket used for temporary
-# storage of the fortify file
+# storage of external artifacts used in an
+# analysis
 bucket: s3-bucket
