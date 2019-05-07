@@ -54,9 +54,10 @@ analyze:  ## Perform an analysis of the project
 
 .PHONY: build
 build: ## Build the project
-	CGO_ENABLED=$(CGO_ENABLED) GOOS=$(GOOS) $(GOBUILD) -ldflags "-X main.buildTime=$(DATE) -X main.appVersion=$(BUILD_VERSION)" -o $(APP) .
 	@echo "Building latest image"
-	@docker build -t ionchannel/ionize .
+	docker build \
+		--build-arg BUILD_PATH=/go$${PWD/$$GOPATH} \
+		-t ionchannel/ionize .
 
 .PHONY: deploy
 deploy: #build
