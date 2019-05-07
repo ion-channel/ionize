@@ -33,7 +33,6 @@ all: test build
 .PHONY: travis_setup
 travis_setup: ## Setup the travis environmnet
 	@if [[ -n "$$BUILD_ENV" ]] && [[ "$$BUILD_ENV" == "testing" ]]; then echo -e "$(INFO_COLOR)THIS IS EXECUTING AGAINST THE TESTING ENVIRONMEMNT$(NO_COLOR)"; fi
-	@sudo /etc/init.d/postgresql stop
 	@echo "Installing AWS cli"
 	@curl "https://s3.amazonaws.com/aws-cli/awscli-bundle.zip" -o "awscli-bundle.zip"
 	@unzip awscli-bundle.zip
