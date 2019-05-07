@@ -114,6 +114,114 @@ func TestPending(t *testing.T) {
 	}
 }
 
+func TestExcluded(t *testing.T) {
+	fakeTest := testing.T{}
+
+	g := Goblin(&fakeTest)
+
+	count := 0
+	g.Describe("Numbers", func() {
+
+		g.Xit("Should add numbers", func() {
+			count++
+			sum := 1 + 1
+			g.Assert(sum).Equal(2)
+		})
+
+		g.Describe("Substraction", func() {
+			g.Xit("Should substract numbers", func() {
+				count++
+				sub := 5 - 5
+				g.Assert(sub).Equal(1)
+			})
+		})
+
+	})
+
+	if count != 0 {
+		t.Fatal("Failed")
+	}
+
+	if fakeTest.Failed() {
+		t.Fatal("Failed")
+	}
+}
+
+func TestJustBeforeEach(t *testing.T) {
+	fakeTest := testing.T{}
+
+	g := Goblin(&fakeTest)
+	const (
+		before = iota
+		beforeEach
+		nBeforeEach
+		justBeforeEach
+		nJustBeforeEach
+		it
+		nIt
+	)
+
+	var (
+		res [9]int
+		i   int
+	)
+
+	g.Describe("Outer", func() {
+		g.Before(func() {
+			res[i] = before
+			i++
+		})
+
+		g.BeforeEach(func() {
+			res[i] = beforeEach
+			i++
+		})
+
+		g.JustBeforeEach(func() {
+			res[i] = justBeforeEach
+			i++
+		})
+
+		g.It("should run all before handles by now", func() {
+			res[i] = it
+			i++
+		})
+
+		g.Describe("Nested", func() {
+			g.BeforeEach(func() {
+				res[i] = nBeforeEach
+				i++
+			})
+
+			g.JustBeforeEach(func() {
+				res[i] = nJustBeforeEach
+				i++
+			})
+
+			g.It("should run all before handles by now", func() {
+				res[i] = nIt
+				i++
+			})
+		})
+	})
+
+	expected := [...]int{
+		before,
+		beforeEach,
+		justBeforeEach,
+		it,
+		beforeEach,
+		nBeforeEach,
+		justBeforeEach,
+		nJustBeforeEach,
+		nIt,
+	}
+
+	if res != expected {
+		t.Fatalf("expected %v to equal %v", res, expected)
+	}
+}
+
 func TestNotRunBeforesOrAfters(t *testing.T) {
 	fakeTest := testing.T{}
 
@@ -124,7 +232,12 @@ func TestNotRunBeforesOrAfters(t *testing.T) {
 		g.Before(func() {
 			count++
 		})
+
 		g.BeforeEach(func() {
+			count++
+		})
+
+		g.JustBeforeEach(func() {
 			count++
 		})
 
@@ -139,7 +252,12 @@ func TestNotRunBeforesOrAfters(t *testing.T) {
 			g.Before(func() {
 				count++
 			})
+
 			g.BeforeEach(func() {
+				count++
+			})
+
+			g.JustBeforeEach(func() {
 				count++
 			})
 
@@ -202,7 +320,6 @@ func TestRegex(t *testing.T) {
 
 	// Reset the regex so other tests can run
 	runRegex = nil
-
 }
 
 func TestFailImmediately(t *testing.T) {

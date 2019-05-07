@@ -16,6 +16,11 @@ type Runnable interface {
 	run(*G) bool
 }
 
+type Itable interface {
+	run(*G) bool
+	failed(string, []string)
+}
+
 func (g *G) Describe(name string, h func()) {
 	d := &Describe{name: name, h: h, parent: g.parent}
 
@@ -30,28 +35,30 @@ func (g *G) Describe(name string, h func()) {
 	g.parent = d.parent
 
 	if g.parent == nil && d.hasTests {
-		g.reporter.begin()
+		g.reporter.Begin()
 		if d.run(g) {
 			g.t.Fail()
 		}
-		g.reporter.end()
+		g.reporter.End()
 	}
 }
+
 func (g *G) Timeout(time time.Duration) {
 	g.timeout = time
 	g.timer.Reset(time)
 }
 
 type Describe struct {
-	name       string
-	h          func()
-	children   []Runnable
-	befores    []func()
-	afters     []func()
-	afterEach  []func()
-	beforeEach []func()
-	hasTests   bool
-	parent     *Describe
+	name           string
+	h              func()
+	children       []Runnable
+	befores        []func()
+	afters         []func()
+	afterEach      []func()
+	beforeEach     []func()
+	justBeforeEach []func()
+	hasTests       bool
+	parent         *Describe
 }
 
 func (d *Describe) runBeforeEach() {
@@ -60,6 +67,16 @@ func (d *Describe) runBeforeEach() {
 	}
 
 	for _, b := range d.beforeEach {
+		b()
+	}
+}
+
+func (d *Describe) runJustBeforeEach() {
+	if d.parent != nil {
+		d.parent.runJustBeforeEach()
+	}
+
+	for _, b := range d.justBeforeEach {
 		b()
 	}
 }
@@ -78,7 +95,7 @@ func (d *Describe) runAfterEach() {
 func (d *Describe) run(g *G) bool {
 	failed := false
 	if d.hasTests {
-		g.reporter.beginDescribe(d.name)
+		g.reporter.BeginDescribe(d.name)
 
 		for _, b := range d.befores {
 			b()
@@ -94,16 +111,16 @@ func (d *Describe) run(g *G) bool {
 			a()
 		}
 
-		g.reporter.endDescribe()
+		g.reporter.EndDescribe()
 	}
 
 	return failed
 }
 
 type Failure struct {
-	stack    []string
-	testName string
-	message  string
+	Stack    []string
+	TestName string
+	Message  string
 }
 
 type It struct {
@@ -119,11 +136,13 @@ func (it *It) run(g *G) bool {
 	g.currentIt = it
 
 	if it.h == nil {
-		g.reporter.itIsPending(it.name)
+		g.reporter.ItIsPending(it.name)
 		return false
 	}
 	//TODO: should handle errors for beforeEach
 	it.parent.runBeforeEach()
+
+	it.parent.runJustBeforeEach()
 
 	runIt(g, it.h)
 
@@ -135,16 +154,36 @@ func (it *It) run(g *G) bool {
 	}
 
 	if failed {
-		g.reporter.itFailed(it.name)
-		g.reporter.failure(it.failure)
+		g.reporter.ItFailed(it.name)
+		g.reporter.Failure(it.failure)
 	} else {
-		g.reporter.itPassed(it.name)
+		g.reporter.ItPassed(it.name)
 	}
 	return failed
 }
 
 func (it *It) failed(msg string, stack []string) {
-	it.failure = &Failure{stack: stack, message: msg, testName: it.parent.name + " " + it.name}
+	it.failure = &Failure{Stack: stack, Message: msg, TestName: it.parent.name + " " + it.name}
+}
+
+type Xit struct {
+	h        interface{}
+	name     string
+	parent   *Describe
+	failure  *Failure
+	reporter Reporter
+	isAsync  bool
+}
+
+func (xit *Xit) run(g *G) bool {
+	g.currentIt = xit
+
+	g.reporter.ItIsExcluded(xit.name)
+	return false
+}
+
+func (xit *Xit) failed(msg string, stack []string) {
+	xit.failure = nil
 }
 
 func parseFlags() {
@@ -162,11 +201,10 @@ var isTty = flag.Bool("goblin.tty", true, "Sets the default output format (color
 var regexParam = flag.String("goblin.run", "", "Runs only tests which match the supplied regex")
 var runRegex *regexp.Regexp
 
-func init() {
-	parseFlags()
-}
-
 func Goblin(t *testing.T, arguments ...string) *G {
+	if !flag.Parsed() {
+		parseFlags()
+	}
 	g := &G{t: t, timeout: *timeout}
 	var fancy TextFancier
 	if *isTty {
@@ -222,7 +260,7 @@ func runIt(g *G, h interface{}) {
 type G struct {
 	t              *testing.T
 	parent         *Describe
-	currentIt      *It
+	currentIt      Itable
 	timeout        time.Duration
 	reporter       Reporter
 	timedOut       bool
@@ -243,6 +281,17 @@ func (g *G) It(name string, h ...interface{}) {
 			it.h = h[0]
 		}
 		g.parent.children = append(g.parent.children, Runnable(it))
+	}
+}
+
+func (g *G) Xit(name string, h ...interface{}) {
+	if matchesRegex(name) {
+		xit := &Xit{name: name, parent: g.parent, reporter: g.reporter}
+		notifyParents(g.parent)
+		if len(h) > 0 {
+			xit.h = h[0]
+		}
+		g.parent.children = append(g.parent.children, Runnable(xit))
 	}
 }
 
@@ -268,6 +317,10 @@ func (g *G) BeforeEach(h func()) {
 	g.parent.beforeEach = append(g.parent.beforeEach, h)
 }
 
+func (g *G) JustBeforeEach(h func()) {
+	g.parent.justBeforeEach = append(g.parent.justBeforeEach, h)
+}
+
 func (g *G) After(h func()) {
 	g.parent.afters = append(g.parent.afters, h)
 }
@@ -281,7 +334,7 @@ func (g *G) Assert(src interface{}) *Assertion {
 }
 
 func timeTrack(start time.Time, g *G) {
-	g.reporter.itTook(time.Since(start))
+	g.reporter.ItTook(time.Since(start))
 }
 
 func (g *G) Fail(error interface{}) {
@@ -298,5 +351,4 @@ func (g *G) Fail(error interface{}) {
 		//Stop test function execution
 		runtime.Goexit()
 	}
-
 }
