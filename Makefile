@@ -8,7 +8,7 @@ GOBUILD=$(GOCMD) build
 GOCLEAN=$(GOCMD) clean
 GOLIST=$(GOCMD) list
 GOVET=$(GOCMD) vet
-GOTEST=$(GOCMD) test -v $(shell $(GOCMD) list ./... | grep -v /vendor/)
+GOTEST=$(GOCMD) test -v ./...
 GOFMT=$(GOCMD) fmt
 CGO_ENABLED ?= 0
 GOOS ?= $(shell uname -s | tr '[:upper:]' '[:lower:]')
@@ -16,7 +16,7 @@ GOOS ?= $(shell uname -s | tr '[:upper:]' '[:lower:]')
 # General Vars
 APP := $(shell basename $(PWD) | tr '[:upper:]' '[:lower:]')
 DATE := $(shell date -u +%Y-%m-%d%Z%H:%M:%S)
-VERSION := v0.1.7
+VERSION := v0.1.13
 COVERAGE_DIR=coverage
 
 TRAVIS_BUILD_NUMBER ?= 1
@@ -33,7 +33,6 @@ all: test build
 .PHONY: travis_setup
 travis_setup: ## Setup the travis environmnet
 	@if [[ -n "$$BUILD_ENV" ]] && [[ "$$BUILD_ENV" == "testing" ]]; then echo -e "$(INFO_COLOR)THIS IS EXECUTING AGAINST THE TESTING ENVIRONMEMNT$(NO_COLOR)"; fi
-	@sudo /etc/init.d/postgresql stop
 	@echo "Installing AWS cli"
 	@curl "https://s3.amazonaws.com/aws-cli/awscli-bundle.zip" -o "awscli-bundle.zip"
 	@unzip awscli-bundle.zip
@@ -54,9 +53,10 @@ analyze:  ## Perform an analysis of the project
 
 .PHONY: build
 build: ## Build the project
-	CGO_ENABLED=$(CGO_ENABLED) GOOS=$(GOOS) $(GOBUILD) -ldflags "-X main.buildTime=$(DATE) -X main.appVersion=$(BUILD_VERSION)" -o $(APP) .
 	@echo "Building latest image"
-	@docker build -t ionchannel/ionize .
+	docker build \
+		--build-arg BUILD_PATH=/go$${PWD/$$GOPATH} \
+		-t ionchannel/ionize .
 
 .PHONY: deploy
 deploy: #build

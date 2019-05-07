@@ -8,15 +8,16 @@ import (
 )
 
 type Reporter interface {
-	beginDescribe(string)
-	endDescribe()
-	begin()
-	end()
-	failure(*Failure)
-	itTook(time.Duration)
-	itFailed(string)
-	itPassed(string)
-	itIsPending(string)
+	BeginDescribe(string)
+	EndDescribe()
+	Begin()
+	End()
+	Failure(*Failure)
+	ItTook(time.Duration)
+	ItFailed(string)
+	ItPassed(string)
+	ItIsPending(string)
+	ItIsExcluded(string)
 }
 
 type TextFancier interface {
@@ -24,14 +25,15 @@ type TextFancier interface {
 	Gray(text string) string
 	Cyan(text string) string
 	Green(text string) string
+	Yellow(text string) string
 	WithCheck(text string) string
 }
 
 type DetailedReporter struct {
-	level, failed, passed, pending    int
-	failures                          []*Failure
-	executionTime, totalExecutionTime time.Duration
-	fancy                             TextFancier
+	level, failed, passed, pending, excluded int
+	failures                                 []*Failure
+	executionTime, totalExecutionTime        time.Duration
+	fancy                                    TextFancier
 }
 
 func (r *DetailedReporter) SetTextFancier(f TextFancier) {
@@ -57,6 +59,10 @@ func (self *TerminalFancier) Green(text string) string {
 	return "\033[32m" + text + "\033[0m"
 }
 
+func (self *TerminalFancier) Yellow(text string) string {
+	return "\033[33m" + text + "\033[0m"
+}
+
 func (self *TerminalFancier) WithCheck(text string) string {
 	return "\033[32m\u2713\033[0m " + text
 }
@@ -65,7 +71,7 @@ func (r *DetailedReporter) getSpace() string {
 	return strings.Repeat(" ", (r.level+1)*2)
 }
 
-func (r *DetailedReporter) failure(failure *Failure) {
+func (r *DetailedReporter) Failure(failure *Failure) {
 	r.failures = append(r.failures, failure)
 }
 
@@ -77,40 +83,45 @@ func (r *DetailedReporter) printWithCheck(text string) {
 	fmt.Printf("%v%v\n", r.getSpace(), r.fancy.WithCheck(text))
 }
 
-func (r *DetailedReporter) beginDescribe(name string) {
+func (r *DetailedReporter) BeginDescribe(name string) {
 	fmt.Println("")
 	r.print(name)
 	r.level++
 }
 
-func (r *DetailedReporter) endDescribe() {
+func (r *DetailedReporter) EndDescribe() {
 	r.level--
 }
 
-func (r *DetailedReporter) itTook(duration time.Duration) {
+func (r *DetailedReporter) ItTook(duration time.Duration) {
 	r.executionTime = duration
 	r.totalExecutionTime += duration
 }
 
-func (r *DetailedReporter) itFailed(name string) {
+func (r *DetailedReporter) ItFailed(name string) {
 	r.failed++
 	r.print(r.fancy.Red(strconv.Itoa(r.failed) + ") " + name))
 }
 
-func (r *DetailedReporter) itPassed(name string) {
+func (r *DetailedReporter) ItPassed(name string) {
 	r.passed++
 	r.printWithCheck(r.fancy.Gray(name))
 }
 
-func (r *DetailedReporter) itIsPending(name string) {
+func (r *DetailedReporter) ItIsPending(name string) {
 	r.pending++
 	r.print(r.fancy.Cyan("- " + name))
 }
 
-func (r *DetailedReporter) begin() {
+func (r *DetailedReporter) ItIsExcluded(name string) {
+	r.excluded++
+	r.print(r.fancy.Yellow("- " + name))
 }
 
-func (r *DetailedReporter) end() {
+func (r *DetailedReporter) Begin() {
+}
+
+func (r *DetailedReporter) End() {
 	comp := fmt.Sprintf("%d tests complete", r.passed)
 	t := fmt.Sprintf("(%d ms)", r.totalExecutionTime/time.Millisecond)
 
@@ -122,15 +133,20 @@ func (r *DetailedReporter) end() {
 		fmt.Printf(" %v\n\n", r.fancy.Cyan(pend))
 	}
 
+	if r.excluded > 0 {
+		excl := fmt.Sprintf("%d test(s) excluded", r.excluded)
+		fmt.Printf(" %v\n\n", r.fancy.Yellow(excl))
+	}
+
 	if len(r.failures) > 0 {
 		fmt.Printf("%s \n\n", r.fancy.Red(fmt.Sprintf(" %d tests failed:", len(r.failures))))
 
 	}
 
 	for i, failure := range r.failures {
-		fmt.Printf("  %d) %s:\n\n", i+1, failure.testName)
-		fmt.Printf("    %s\n", r.fancy.Red(failure.message))
-		for _, stackItem := range failure.stack {
+		fmt.Printf("  %d) %s:\n\n", i+1, failure.TestName)
+		fmt.Printf("    %s\n", r.fancy.Red(failure.Message))
+		for _, stackItem := range failure.Stack {
 			fmt.Printf("    %s\n", r.fancy.Gray(stackItem))
 		}
 	}

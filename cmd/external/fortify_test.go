@@ -12,7 +12,7 @@ import (
 	"github.com/aws/aws-sdk-go/service/s3"
 	"github.com/aws/aws-sdk-go/service/s3/s3iface"
 	"github.com/aws/aws-sdk-go/service/s3/s3manager"
-	. "github.com/franela/goblin"
+	"github.com/franela/goblin"
 	"github.com/ion-channel/ionize/dropbox"
 	. "github.com/onsi/gomega"
 )
@@ -30,7 +30,7 @@ func (c mockS3Client) PutObjectRequest(input *s3.PutObjectInput) (req *request.R
 }
 
 func TestFortify(t *testing.T) {
-	g := Goblin(t)
+	g := goblin.Goblin(t)
 	RegisterFailHandler(func(m string, _ ...int) { g.Fail(m) })
 
 	g.Describe("FPR file handling", func() {

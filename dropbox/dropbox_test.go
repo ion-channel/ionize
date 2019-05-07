@@ -3,12 +3,12 @@ package dropbox
 import (
 	"testing"
 
-	. "github.com/franela/goblin"
+	"github.com/franela/goblin"
 	. "github.com/onsi/gomega"
 )
 
 func TestDropbox(t *testing.T) {
-	g := Goblin(t)
+	g := goblin.Goblin(t)
 	RegisterFailHandler(func(m string, _ ...int) { g.Fail(m) })
 
 	g.Describe("generate UUID", func() {
