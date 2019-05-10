@@ -10,9 +10,10 @@ import (
 )
 
 const (
-	scannerAnalyzeProjectEndpoint    = "v1/scanner/analyzeProject"
-	scannerGetAnalysisStatusEndpoint = "v1/scanner/getAnalysisStatus"
-	scannerAddScanEndpoint           = "v1/scanner/addScanResult"
+	scannerAnalyzeProjectEndpoint          = "v1/scanner/analyzeProject"
+	scannerGetAnalysisStatusEndpoint       = "v1/scanner/getAnalysisStatus"
+	scannerGetLatestAnalysisStatusEndpoint = "v1/scanner/getLatestAnalysisStatus"
+	scannerAddScanEndpoint                 = "v1/scanner/addScanResult"
 )
 
 type analyzeRequest struct {
@@ -30,7 +31,8 @@ type addScanRequest struct {
 	Type      string               `json:"scan_type"`
 }
 
-//AnalyzeProject takes a projectID, teamID, and project branch, performs an analysis, and returns the result status or an error encountered by the API
+// AnalyzeProject takes a projectID, teamID, and project branch, performs an
+// analysis, and returns the result status or an error encountered by the API
 func (ic *IonClient) AnalyzeProject(projectID, teamID, branch, token string) (*scanner.AnalysisStatus, error) {
 	request := &analyzeRequest{}
 	request.TeamID = teamID
@@ -68,6 +70,26 @@ func (ic *IonClient) GetAnalysisStatus(analysisID, teamID, projectID, token stri
 	params.Set("project_id", projectID)
 
 	b, err := ic.Get(scannerGetAnalysisStatusEndpoint, token, params, nil, nil)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get analysis: %v", err.Error())
+	}
+
+	var a scanner.AnalysisStatus
+	err = json.Unmarshal(b, &a)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get analysis: %v", err.Error())
+	}
+
+	return &a, nil
+}
+
+//GetLatestAnalysisStatus takes a teamID, and projectID and returns the latest analysis status or an error encountered by the API
+func (ic *IonClient) GetLatestAnalysisStatus(teamID, projectID, token string) (*scanner.AnalysisStatus, error) {
+	params := &url.Values{}
+	params.Set("team_id", teamID)
+	params.Set("project_id", projectID)
+
+	b, err := ic.Get(scannerGetLatestAnalysisStatusEndpoint, token, params, nil, nil)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get analysis: %v", err.Error())
 	}

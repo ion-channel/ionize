@@ -113,7 +113,7 @@ func setSliceWithProperType(key *Key, field reflect.Value, delim string, allowSh
 	default:
 		return fmt.Errorf("unsupported type '[]%s'", sliceOf)
 	}
-	if err != nil && isStrict {
+	if isStrict {
 		return err
 	}
 
@@ -166,7 +166,7 @@ func setWithProperType(t reflect.Type, key *Key, field reflect.Value, delim stri
 	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
 		durationVal, err := key.Duration()
 		// Skip zero value
-		if err == nil && int64(durationVal) > 0 {
+		if err == nil && int(durationVal) > 0 {
 			field.Set(reflect.ValueOf(durationVal))
 			return nil
 		}
@@ -180,7 +180,7 @@ func setWithProperType(t reflect.Type, key *Key, field reflect.Value, delim stri
 	case reflect.Uint, reflect.Uint16, reflect.Uint32, reflect.Uint64:
 		durationVal, err := key.Duration()
 		// Skip zero value
-		if err == nil && uint64(durationVal) > 0 {
+		if err == nil && int(durationVal) > 0 {
 			field.Set(reflect.ValueOf(durationVal))
 			return nil
 		}
@@ -283,7 +283,7 @@ func (s *Section) MapTo(v interface{}) error {
 	return s.mapTo(val, false)
 }
 
-// StrictMapTo maps section to given struct in strict mode,
+// MapTo maps section to given struct in strict mode,
 // which returns all possible error including value parsing error.
 func (s *Section) StrictMapTo(v interface{}) error {
 	typ := reflect.TypeOf(v)
@@ -303,13 +303,13 @@ func (f *File) MapTo(v interface{}) error {
 	return f.Section("").MapTo(v)
 }
 
-// StrictMapTo maps file to given struct in strict mode,
+// MapTo maps file to given struct in strict mode,
 // which returns all possible error including value parsing error.
 func (f *File) StrictMapTo(v interface{}) error {
 	return f.Section("").StrictMapTo(v)
 }
 
-// MapToWithMapper maps data sources to given struct with name mapper.
+// MapTo maps data sources to given struct with name mapper.
 func MapToWithMapper(v interface{}, mapper NameMapper, source interface{}, others ...interface{}) error {
 	cfg, err := Load(source, others...)
 	if err != nil {
@@ -450,12 +450,6 @@ func (s *Section) reflectFrom(val reflect.Value) error {
 				// Note: fieldName can never be empty here, ignore error.
 				sec, _ = s.f.NewSection(fieldName)
 			}
-
-			// Add comment from comment tag
-			if len(sec.Comment) == 0 {
-				sec.Comment = tpField.Tag.Get("comment")
-			}
-
 			if err = sec.reflectFrom(field); err != nil {
 				return fmt.Errorf("error reflecting field (%s): %v", fieldName, err)
 			}
@@ -467,12 +461,6 @@ func (s *Section) reflectFrom(val reflect.Value) error {
 		if err != nil {
 			key, _ = s.NewKey(fieldName, "")
 		}
-
-		// Add comment from comment tag
-		if len(key.Comment) == 0 {
-			key.Comment = tpField.Tag.Get("comment")
-		}
-
 		if err = reflectWithProperType(tpField.Type, key, field, parseDelim(tpField.Tag.Get("delim"))); err != nil {
 			return fmt.Errorf("error reflecting field (%s): %v", fieldName, err)
 		}
@@ -500,7 +488,7 @@ func (f *File) ReflectFrom(v interface{}) error {
 	return f.Section("").ReflectFrom(v)
 }
 
-// ReflectFromWithMapper reflects data sources from given struct with name mapper.
+// ReflectFrom reflects data sources from given struct with name mapper.
 func ReflectFromWithMapper(cfg *File, v interface{}, mapper NameMapper) error {
 	cfg.NameMapper = mapper
 	return cfg.ReflectFrom(v)

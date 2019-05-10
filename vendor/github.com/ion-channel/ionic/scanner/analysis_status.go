@@ -25,16 +25,16 @@ const (
 
 // AnalysisStatus is a representation of an Ion Channel Analysis Status within the system
 type AnalysisStatus struct {
-	ID         string       `json:"id"`
-	TeamID     string       `json:"team_id"`
-	ProjectID  string       `json:"project_id"`
-	Message    string       `json:"message"`
-	Branch     string       `json:"branch"`
-	Status     string       `json:"status"`
-	CreatedAt  time.Time    `json:"created_at"`
-	UpdatedAt  time.Time    `json:"updated_at"`
-	ScanStatus []ScanStatus `json:"scan_status"`
-	Deliveries []Delivery   `json:"deliveries"`
+	ID         string              `json:"id"`
+	TeamID     string              `json:"team_id"`
+	ProjectID  string              `json:"project_id"`
+	Message    string              `json:"message"`
+	Branch     string              `json:"branch"`
+	Status     string              `json:"status"`
+	CreatedAt  time.Time           `json:"created_at"`
+	UpdatedAt  time.Time           `json:"updated_at"`
+	ScanStatus []ScanStatus        `json:"scan_status"`
+	Deliveries map[string]Delivery `json:"deliveries"`
 }
 
 // Done indicates an analyse has stopped processing
@@ -42,4 +42,10 @@ func (a *AnalysisStatus) Done() bool {
 	return a.Status == AnalysisStatusErrored ||
 		a.Status == AnalysisStatusFailed ||
 		a.Status == AnalysisStatusFinished
+}
+
+// Navigation represents a navigational meta data reference to given analysis
+type Navigation struct {
+	Analysis       *AnalysisStatus `json:"analysis"`
+	LatestAnalysis *AnalysisStatus `json:"latest_analysis"`
 }
