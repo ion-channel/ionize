@@ -1,5 +1,5 @@
-hash: bef7a8ba36b7af099b1d0ebfdc8e539a30f674560aaa721bf2c55998c18cc119
-updated: 2019-05-07T14:47:25.47982-07:00
+hash: df4de8d8e8105f078ada5c5f5ff79eda2aee0e11ea300ec6e7ef184ce35503c0
+updated: 2019-05-10T14:28:09.561558-07:00
 imports:
 - name: github.com/aws/aws-sdk-go
   version: 74ca63959be8b9a9a24cd86eaaea8bf99de8022d
@@ -36,7 +36,7 @@ imports:
 - name: github.com/fsnotify/fsnotify
   version: 1485a34d5d5723fea214f5710708e19a831720e4
 - name: github.com/go-ini/ini
-  version: 3be5ad479f69d4e08d7fe25edf79bf3346bd658e
+  version: c787282c39ac1fc618827141a1f762240def08a3
 - name: github.com/hashicorp/hcl
   version: 99e2f22d1c94b272184d97dd9d252866409100ab
   subpackages:
@@ -51,7 +51,7 @@ imports:
 - name: github.com/inconshreveable/mousetrap
   version: 76626ae9c91c4f2a10f34cad8ce83ea42c93bb75
 - name: github.com/ion-channel/ionic
-  version: 80efb856617f48eabe23f82f4562181d049ab525
+  version: 947b5f588c22a876fa5ba9c828aea74440ba7db0
   subpackages:
   - aliases
   - analyses
@@ -74,9 +74,9 @@ imports:
   - users
   - vulnerabilities
 - name: github.com/jmespath/go-jmespath
-  version: c2b33e8439af944379acbdd9c3a5fe0bc44bd8a5
+  version: bd40a432e4c76585ef6b72d3fd96fb9b6dc7b68d
 - name: github.com/magiconair/properties
-  version: 7757cc9fdb852f7579b24170bcacda2c7471bb6a
+  version: de8848e004dd33dc07a2947b3d76f618a7fc7ef1
 - name: github.com/mitchellh/mapstructure
   version: 3536a929edddb9a5b34bd6861dc4a9647cb459fe
 - name: github.com/pelletier/go-toml
@@ -96,11 +96,11 @@ imports:
 - name: github.com/spf13/viper
   version: 25b30aa063fc18e48662b86996252eabdcf2f0c7
 - name: golang.org/x/sys
-  version: ecd444e8653b66b20d764e53c22e3e615eea5fae
+  version: a5b02f93d862f065920dd6a40dddc66b60d0dec4
   subpackages:
   - unix
 - name: golang.org/x/text
-  version: 342b2e1fbaa52c93f31447ad2c6abc048c63e475
+  version: c01e4764d870b77f8abe5096ee19ad20d80e8075
   subpackages:
   - encoding
   - encoding/charmap
@@ -112,8 +112,6 @@ imports:
   - encoding/simplifiedchinese
   - encoding/traditionalchinese
   - encoding/unicode
-  - internal/language
-  - internal/language/compact
   - internal/tag
   - internal/utf8internal
   - language
@@ -121,7 +119,7 @@ imports:
   - transform
   - unicode/norm
 - name: gopkg.in/yaml.v2
-  version: 51d6538a90f86fe93ac480b35f37b2be17fef232
+  version: eb3733d160e74a9c7e442f435eb3bea458e1d19f
 testImports:
 - name: github.com/franela/goblin
   version: ead4ad1d27278780bab074b8dee47fba0e67afda
@@ -142,7 +140,7 @@ testImports:
   - matchers/support/goraph/util
   - types
 - name: golang.org/x/net
-  version: f4e77d36d62c17c2336347bb2670ddbd02d092b7
+  version: 92447d55896d6f92b4a0d4fd83bd078b0374e8fa
   subpackages:
   - html
   - html/atom

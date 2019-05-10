@@ -55,6 +55,8 @@ func TestAnalysisReport(t *testing.T) {
 					RuleEvaluationSummary: &rulesets.RuleEvaluationSummary{
 						RulesetName: "super cool ruleset",
 						Summary:     "pass",
+						Risk:        "low",
+						Passed:      true,
 						Ruleresults: []scans.Evaluation{eval},
 					},
 				}
@@ -64,7 +66,7 @@ func TestAnalysisReport(t *testing.T) {
 				Expect(ar).NotTo(BeNil())
 
 				Expect(ar.RulesetName).To(Equal("super cool ruleset"))
-				Expect(ar.Statuses.Status).To(Equal("finished"))
+				Expect(ar.Report.Statuses.Status).To(Equal("finished"))
 				Expect(ar.Risk).To(Equal("low"))
 				Expect(ar.Passed).To(Equal(true))
 				Expect(len(ar.Aliases)).To(Equal(1))
@@ -123,6 +125,8 @@ func TestAnalysisReport(t *testing.T) {
 					RuleEvaluationSummary: &rulesets.RuleEvaluationSummary{
 						RulesetName: "super cool ruleset",
 						Summary:     "pass",
+						Risk:        "low",
+						Passed:      true,
 						Ruleresults: []scans.Evaluation{eval},
 					},
 				}
@@ -132,7 +136,7 @@ func TestAnalysisReport(t *testing.T) {
 				Expect(ar).NotTo(BeNil())
 
 				Expect(ar.RulesetName).To(Equal("super cool ruleset"))
-				Expect(ar.Statuses.Status).To(Equal("finished"))
+				Expect(ar.Report.Statuses.Status).To(Equal("finished"))
 				Expect(ar.Risk).To(Equal("low"))
 				Expect(ar.Passed).To(Equal(true))
 				Expect(len(ar.Aliases)).To(Equal(1))
