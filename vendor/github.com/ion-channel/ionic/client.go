@@ -13,6 +13,7 @@ import (
 
 	"github.com/ion-channel/ionic/errors"
 	"github.com/ion-channel/ionic/pagination"
+	"github.com/ion-channel/ionic/responses"
 )
 
 const (
@@ -46,7 +47,7 @@ func New(baseURL string) (*IonClient, error) {
 func NewWithClient(baseURL string, client *http.Client) (*IonClient, error) {
 	u, err := url.Parse(baseURL)
 	if err != nil {
-		return nil, fmt.Errorf("cannot instantiate new ion client: %v", err.Error())
+		return nil, fmt.Errorf("ionic: client initialization: %v", err.Error())
 	}
 
 	ic := &IonClient{
@@ -92,8 +93,10 @@ func (ic *IonClient) do(method, endpoint, token string, params *url.Values, payl
 	for page.Offset < total {
 		ir, err := ic._do(method, endpoint, token, params, payload, headers, page)
 		if err != nil {
-			return nil, fmt.Errorf("trouble paging from API: %v", err.Error())
+			err.Prepend("api: paging")
+			return nil, err
 		}
+
 		data = append(data, ir.Data[1:len(ir.Data)-1]...)
 		data = append(data, []byte(",")...)
 		page.Up()
@@ -104,12 +107,12 @@ func (ic *IonClient) do(method, endpoint, token string, params *url.Values, payl
 	return data, nil
 }
 
-func (ic *IonClient) _do(method, endpoint, token string, params *url.Values, payload bytes.Buffer, headers http.Header, page *pagination.Pagination) (*IonResponse, *errors.IonError) {
+func (ic *IonClient) _do(method, endpoint, token string, params *url.Values, payload bytes.Buffer, headers http.Header, page *pagination.Pagination) (*responses.IonResponse, *errors.IonError) {
 	u := ic.createURL(endpoint, params, page)
 
 	req, err := http.NewRequest(strings.ToUpper(method), u.String(), &payload)
 	if err != nil {
-		return nil, errors.Errors("no body", 0, "failed to create request: %v", err.Error())
+		return nil, errors.Errors("no body", 0, "http request: failed to create: %v", err.Error())
 	}
 
 	if headers != nil {
@@ -122,23 +125,27 @@ func (ic *IonClient) _do(method, endpoint, token string, params *url.Values, pay
 
 	resp, err := ic.client.Do(req)
 	if err != nil {
-		return nil, errors.Errors("no body", 0, "failed http request: %v", err.Error())
+		return nil, errors.Errors("no body", 0, "http request: failed: %v", err.Error())
 	}
 	defer resp.Body.Close()
 
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return nil, errors.Errors("no body", resp.StatusCode, "failed to read response body: %v", err.Error())
+		return nil, errors.Errors("no body", resp.StatusCode, "response body: failed to read: %v", err.Error())
 	}
 
 	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
-		return nil, errors.Errors(string(body), resp.StatusCode, "error response from API")
+		return nil, errors.Errors(string(body), resp.StatusCode, "api: error response")
 	}
 
-	var ir IonResponse
+	if strings.ToUpper(method) == "HEAD" {
+		return &responses.IonResponse{}, nil
+	}
+
+	var ir responses.IonResponse
 	err = json.Unmarshal(body, &ir)
 	if err != nil {
-		return nil, errors.Errors(string(body), resp.StatusCode, "malformed response: %v", err.Error())
+		return nil, errors.Errors(string(body), resp.StatusCode, "api: malformed response: %v", err.Error())
 	}
 
 	return &ir, nil
@@ -156,6 +163,13 @@ func (ic *IonClient) Delete(endpoint, token string, params *url.Values, headers 
 // any errors it encounters with the API.
 func (ic *IonClient) Get(endpoint, token string, params *url.Values, headers http.Header, page *pagination.Pagination) (json.RawMessage, error) {
 	return ic.do("GET", endpoint, token, params, bytes.Buffer{}, headers, page)
+}
+
+// Head takes an endpoint, token, params, headers, and pagination params to pass as a
+// head call to the API.  It will return any errors it encounters with the API.
+func (ic *IonClient) Head(endpoint, token string, params *url.Values, headers http.Header, page *pagination.Pagination) error {
+	_, err := ic.do("HEAD", endpoint, token, params, bytes.Buffer{}, headers, page)
+	return err
 }
 
 // Post takes an endpoint, token, params, payload, and headers to pass as a post call
