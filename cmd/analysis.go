@@ -125,7 +125,7 @@ func getBranch() string {
 }
 
 func printReport(report *reports.AnalysisReport) int {
-	for _, scanSummary := range report.ScanSummaries {
+	for _, scanSummary := range report.Report.RulesetEvaluation.RuleEvaluationSummary.Ruleresults {
 		fmt.Print(scanSummary.Summary, "...Rule Type: ")
 		fmt.Print(scanSummary.Type, "...")
 		if scanSummary.Passed {
@@ -137,7 +137,7 @@ func printReport(report *reports.AnalysisReport) int {
 		fmt.Println("...Risk: ", scanSummary.Risk)
 	}
 
-	if !report.Passed {
+	if !report.Report.RulesetEvaluation.RuleEvaluationSummary.Passed {
 		fmt.Println("Analysis failed on a rule")
 		return 1
 	}
