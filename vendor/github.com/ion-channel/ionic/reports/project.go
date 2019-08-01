@@ -6,6 +6,15 @@ import (
 	"github.com/ion-channel/ionic/rulesets"
 )
 
+const (
+	// ReportGetProjectReportEndpoint is a string representation of the current endpoint for getting project report
+	ReportGetProjectReportEndpoint = "v1/report/getProject"
+	// ReportGetProjectsReportEndpoint is a string representation of the current endpoint for getting project report
+	ReportGetProjectsReportEndpoint = "v1/report/getProjects"
+	//ReportGetScanReportEndpoint is a string representation of the current endpoint for getting scan report
+	ReportGetScanReportEndpoint = "v1/report/getScan"
+)
+
 // ProjectReport gives the details of a project including past analyses
 type ProjectReport struct {
 	*projects.Project

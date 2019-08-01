@@ -11,3 +11,8 @@ type Alias struct {
 	UpdatedAt time.Time `json:"updated_at"`
 	Version   string    `json:"version"`
 }
+
+const (
+	// AddAliasEndpoint allows the user to attach an alias to a project.  Consists of org, name, version. Requires team id and project id.
+	AddAliasEndpoint = "v1/project/addAlias"
+)

@@ -1,10 +1,29 @@
 package analyses
 
 import (
+	"encoding/json"
+	"fmt"
 	"time"
 
 	"github.com/ion-channel/ionic/rulesets"
 	"github.com/ion-channel/ionic/scans"
+)
+
+const (
+	// AnalysisGetAnalysisEndpoint returns a single raw analysis. Requires team id, project id and analysis id.
+	AnalysisGetAnalysisEndpoint = "v1/animal/getAnalysis"
+	// AnalysisGetAnalysesEndpoint returns multiple raw analyses. Requires team id and project id.
+	AnalysisGetAnalysesEndpoint = "v1/animal/getAnalyses"
+	// AnalysisGetLatestAnalysisSummaryEndpoint returns the latest analysis summary. Requires team id and project id.
+	AnalysisGetLatestAnalysisSummaryEndpoint = "v1/animal/getLatestAnalysisSummary"
+	// AnalysisGetPublicAnalysisEndpoint returns a public analysis.  Requires an analysis id.
+	AnalysisGetPublicAnalysisEndpoint = "v1/animal/getPublicAnalysis"
+	// AnalysisGetLatestPublicAnalysisEndpoint returns a public analysis.  Requires an analysis id.
+	AnalysisGetLatestPublicAnalysisEndpoint = "v1/animal/getLatestPublicAnalysisSummary"
+	// AnalysisGetLatestAnalysisEndpoint returns the latest analysis. Requires team id and project id.
+	AnalysisGetLatestAnalysisEndpoint = "v1/animal/getLatestAnalysis"
+	// AnalysisGetScanEndpoint returns a scan. Requires a team id, project id, analysis id and scan id.
+	AnalysisGetScanEndpoint = "v1/animal/getScan"
 )
 
 // Analysis is a representation of an Ion Channel Analysis within the system
@@ -49,6 +68,15 @@ type Summary struct {
 	TriggerText   string    `json:"trigger_text"`
 	TriggerAuthor string    `json:"trigger_author"`
 	Trigger       string    `json:"trigger"`
+}
+
+// String returns a JSON formatted string of the analysis object
+func (a Analysis) String() string {
+	b, err := json.Marshal(a)
+	if err != nil {
+		return fmt.Sprintf("failed to format user: %v", err.Error())
+	}
+	return string(b)
 }
 
 // NewSummary takes an Analysis and AppliedRulesetSummary to calculate and
