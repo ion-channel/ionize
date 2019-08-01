@@ -79,3 +79,9 @@ vet: ## Run go vet
 lint: ## Run golint
 	@echo "linting..."
 	@$(GOLINTCMD) -set_exit_status $(shell $(GOLIST) ./... | grep -v '/vendor/')
+
+.PHONY: docs
+docs: ## exports documents from the source code
+	@echo "creating documentation..."
+	@./make-public-docs > docs/endpoints.md
+	@pandoc -f markdown docs/endpoints.md -c endpoints.css -s --highlight-style monochrome --metadata pagetitle="Endpoints" -o docs/index.html

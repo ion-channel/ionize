@@ -36,7 +36,7 @@ travis_setup: ## Setup the travis environmnet
 	@echo "Installing AWS cli"
 	@curl "https://s3.amazonaws.com/aws-cli/awscli-bundle.zip" -o "awscli-bundle.zip"
 	@unzip awscli-bundle.zip
-	@sudo /usr/bin/python3.4 ./awscli-bundle/install -i /usr/local/aws -b /usr/local/bin/aws
+	@sudo /usr/bin/python3.5 ./awscli-bundle/install -i /usr/local/aws -b /usr/local/bin/aws
 	@echo "Downloading latest Ionize"
 	@wget --quiet https://s3.amazonaws.com/public.ionchannel.io/files/ionize/linux/bin/ionize
 	@chmod +x ionize && mkdir -p $$HOME/.local/bin && mv ionize $$HOME/.local/bin
