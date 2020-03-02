@@ -20,7 +20,7 @@ var (
 func init() {
 	RootCmd.AddCommand(analyzeCmd)
 
-	analyzeCmd.Flags().BoolVarP(&async, "async", "a", false, "run the command asynchronously with waiting for completion")
+	analyzeCmd.Flags().BoolVarP(&async, "async", "a", false, "run the command asynchronously without waiting for completion")
 }
 
 // AnalyzeCmd represents the doAnalysis command
