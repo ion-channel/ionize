@@ -33,3 +33,10 @@ deploy:
     on:
       tags: true
       branch: master
+
+  - provider: script
+    skip_cleanup: true
+    script: ext/goreleaser release
+    on:
+      go: '1.13'
+      tags: true
