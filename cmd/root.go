@@ -63,6 +63,5 @@ func initConfig() {
 }
 
 func init() {
-	RootCmd.AddCommand(analyzeCmd)
 	RootCmd.AddCommand(scrutinizeCmd)
 }
