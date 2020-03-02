@@ -2,3 +2,6 @@ ionize
 coverage.txt
 coverage/
 audit.fvdl
+awscli-bundle.zip
+awscli-bundle/
+deploy/
