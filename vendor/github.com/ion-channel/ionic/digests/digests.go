@@ -23,7 +23,6 @@ const (
 	transitiveDependencyIndex
 	dependencyOutdatedIndex
 	noVersionIndex
-	aboutYMLIndex
 	languagesIndex
 	uniqueCommittersIndex
 	codeCoverageIndex
@@ -54,7 +53,9 @@ func NewDigests(appliedRuleset *rulesets.AppliedRulesetSummary, statuses []scann
 			continue
 		}
 
-		ds = append(ds, d...)
+		if d != nil {
+			ds = append(ds, d...)
+		}
 	}
 
 	sort.Slice(ds, func(i, j int) bool { return ds[i].Index < ds[j].Index })
@@ -96,11 +97,11 @@ func _newDigests(status *scanner.ScanStatus, eval *scans.Evaluation) ([]Digest, 
 	case "external_coverage", "code_coverage", "coverage":
 		return coveragDigests(status, eval)
 
-	case "about_yml":
-		return aboutYMLDigests(status, eval)
-
 	case "difference":
 		return differenceDigests(status, eval)
+
+	case "about_yml", "file_type":
+		return nil, nil
 
 	default:
 		return nil, fmt.Errorf("Couldn't figure out how to map '%v' to a digest", status.Name)

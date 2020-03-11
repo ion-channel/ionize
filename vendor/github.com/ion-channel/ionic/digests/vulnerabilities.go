@@ -2,6 +2,7 @@ package digests
 
 import (
 	"fmt"
+	"strconv"
 
 	"github.com/ion-channel/ionic/scanner"
 	"github.com/ion-channel/ionic/scans"
@@ -28,19 +29,30 @@ func vulnerabilityDigests(status *scanner.ScanStatus, eval *scans.Evaluation) ([
 				v := b.Vulnerabilities[i].Vulnerabilities[j]
 				ids[v.ID] = true
 
-				switch v.ScoreVersion {
-				case "3.0":
-					if v.ScoreDetails.CVSSv3 != nil && v.ScoreDetails.CVSSv3.BaseScore >= 9.0 {
-						crits++
-					} else if v.ScoreDetails.CVSSv3 != nil && v.ScoreDetails.CVSSv3.BaseScore >= 7.0 {
-						highs++
+				if v.ScoreSystem == "NPM" {
+					if npmScore, err := strconv.ParseFloat(v.Score, 32); err == nil {
+						if npmScore > 7 { // 10, 9, 8
+							crits++
+						} else if npmScore > 5 { // 7, 6
+							highs++
+						}
 					}
-				case "2.0":
-					if v.ScoreDetails.CVSSv2 != nil && v.ScoreDetails.CVSSv2.BaseScore >= 7.0 {
-						highs++
+				} else {
+					switch v.ScoreVersion {
+					case "3.0":
+						if v.ScoreDetails.CVSSv3 != nil && v.ScoreDetails.CVSSv3.BaseScore >= 9.0 {
+							crits++
+						} else if v.ScoreDetails.CVSSv3 != nil && v.ScoreDetails.CVSSv3.BaseScore >= 7.0 {
+							highs++
+						}
+					case "2.0":
+						if v.ScoreDetails.CVSSv2 != nil && v.ScoreDetails.CVSSv2.BaseScore >= 7.0 {
+							highs++
+						}
+					default:
 					}
-				default:
 				}
+
 			}
 		}
 
@@ -50,7 +62,7 @@ func vulnerabilityDigests(status *scanner.ScanStatus, eval *scans.Evaluation) ([
 	// total vulns
 	d := NewDigest(status, totalVulnerabilitiesIndex, "total vulnerability", "total vulnerabilities")
 
-	if eval != nil {
+	if eval != nil && !status.Errored() {
 		err := d.AppendEval(eval, "count", vulnCount)
 		if err != nil {
 			return nil, fmt.Errorf("failed to add evaluation data to total vulnerabilities digest: %v", err.Error())
@@ -73,7 +85,7 @@ func vulnerabilityDigests(status *scanner.ScanStatus, eval *scans.Evaluation) ([
 	// unique vulns
 	d = NewDigest(status, uniqueVulnerabilitiesIndex, "unique vulnerability", "unique vulnerabilities")
 
-	if eval != nil {
+	if eval != nil && !status.Errored() {
 		err := d.AppendEval(eval, "count", uniqVulnCount)
 		if err != nil {
 			return nil, fmt.Errorf("failed to add evaluation data to unique vulnerabilities digest: %v", err.Error())
@@ -96,7 +108,7 @@ func vulnerabilityDigests(status *scanner.ScanStatus, eval *scans.Evaluation) ([
 	// high vulns
 	d = NewDigest(status, highVulnerabilitiesIndex, "high vulnerability", "high vulnerabilities")
 
-	if eval != nil {
+	if eval != nil && !status.Errored() {
 		err := d.AppendEval(eval, "count", highs)
 		if err != nil {
 			return nil, fmt.Errorf("failed to add evaluation data to unique vulnerabilities digest: %v", err.Error())
@@ -112,7 +124,7 @@ func vulnerabilityDigests(status *scanner.ScanStatus, eval *scans.Evaluation) ([
 	// critical vulns
 	d = NewDigest(status, criticalVulnerabilitiesIndex, "critical vulnerability", "critical vulnerabilities")
 
-	if eval != nil {
+	if eval != nil && !status.Errored() {
 		err := d.AppendEval(eval, "count", crits)
 		if err != nil {
 			return nil, fmt.Errorf("failed to add evaluation data to unique vulnerabilities digest: %v", err.Error())

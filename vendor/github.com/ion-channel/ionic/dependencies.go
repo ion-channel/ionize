@@ -75,7 +75,7 @@ func (ic *IonClient) GetLatestVersionForDependency(packageName, ecosystem, token
 	params.Set("name", packageName)
 	params.Set("type", ecosystem)
 
-	b, err := ic.Get(dependencies.GetLatestVersionForDependencyEndpoint, token, params, nil, nil)
+	b, _, err := ic.Get(dependencies.GetLatestVersionForDependencyEndpoint, token, params, nil, nil)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get latest version for dependency: %v", err.Error())
 	}
@@ -99,7 +99,7 @@ func (ic *IonClient) GetVersionsForDependency(packageName, ecosystem, token stri
 	params.Set("name", packageName)
 	params.Set("type", ecosystem)
 
-	b, err := ic.Get(dependencies.GetVersionsForDependencyEndpoint, token, params, nil, nil)
+	b, _, err := ic.Get(dependencies.GetVersionsForDependencyEndpoint, token, params, nil, nil)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get latest version for dependency: %v", err.Error())
 	}
@@ -120,4 +120,23 @@ func (ic *IonClient) GetVersionsForDependency(packageName, ecosystem, token stri
 	}
 
 	return deps, nil
+}
+
+// SearchDependencies takes a query `org AND name` and
+// calls the Ion API to retrieve the information, then forms a slice of
+// Ionic dependencies.Dependency objects
+func (ic *IonClient) SearchDependencies(q, token string) ([]dependencies.Dependency, error) {
+	params := &url.Values{}
+	params.Set("q", q)
+
+	b, _, err := ic.Get(dependencies.ResolveDependencySearchEndpoint, token, params, nil, nil)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get dependencies: %v", err.Error())
+	}
+	var results []dependencies.Dependency
+	err = json.Unmarshal(b, &results)
+	if err != nil {
+		return nil, fmt.Errorf("failed to unmarshal search results: %v (%v)", err.Error(), string(b))
+	}
+	return results, nil
 }

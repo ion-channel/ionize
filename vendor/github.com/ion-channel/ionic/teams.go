@@ -12,13 +12,9 @@ import (
 // CreateTeamOptions represents all the values that can be provided for a team
 // at the time of creation
 type CreateTeamOptions struct {
-	Name             string `json:"name"`
-	POCName          string `json:"poc_name"`
-	POCEmail         string `json:"poc_email"`
-	DeliveryLocation string `json:"delivery_location"`
-	AccessKey        string `json:"access_key"`
-	SecretKey        string `json:"secret_key"`
-	DeliveryRegion   string `json:"delivery_region"`
+	Name     string `json:"name"`
+	POCName  string `json:"poc_name"`
+	POCEmail string `json:"poc_email"`
 }
 
 // CreateTeam takes a create team options, validates the minimum info is
@@ -57,7 +53,7 @@ func (ic *IonClient) GetTeam(id, token string) (*teams.Team, error) {
 	params := &url.Values{}
 	params.Set("someid", id)
 
-	b, err := ic.Get(teams.TeamsGetTeamEndpoint, token, params, nil, nil)
+	b, _, err := ic.Get(teams.TeamsGetTeamEndpoint, token, params, nil, nil)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get team: %v", err.Error())
 	}
@@ -75,7 +71,7 @@ func (ic *IonClient) GetTeam(id, token string) (*teams.Team, error) {
 // team.  An error is returned for client communications and unmarshalling
 // errors.
 func (ic *IonClient) GetTeams(token string) ([]teams.Team, error) {
-	b, err := ic.Get(teams.TeamsGetTeamsEndpoint, token, nil, nil, nil)
+	b, _, err := ic.Get(teams.TeamsGetTeamsEndpoint, token, nil, nil, nil)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get teams: %v", err.Error())
 	}

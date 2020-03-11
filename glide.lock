@@ -1,5 +1,5 @@
-hash: f154752a281caca4602bec670cabe817e53149e7e223c993a370582da9de9eab
-updated: 2019-07-31T19:18:17.267417-07:00
+hash: 1ff114e2345a445879a134c464ca42eb6046f2535742e9c3e866243d92ab8e74
+updated: 2020-03-11T14:09:28.469144-07:00
 imports:
 - name: github.com/aws/aws-sdk-go
   version: 74ca63959be8b9a9a24cd86eaaea8bf99de8022d
@@ -36,7 +36,7 @@ imports:
 - name: github.com/fsnotify/fsnotify
   version: 1485a34d5d5723fea214f5710708e19a831720e4
 - name: github.com/go-ini/ini
-  version: 8659100d2d9ecf3760a41838b1886db49426d001
+  version: 8e0f5b3a15fc93a84881c6cc50129bd62e83a314
 - name: github.com/hashicorp/hcl
   version: cf7d376da96d9cecec7c7483cec2735efe54a410
   subpackages:
@@ -51,16 +51,17 @@ imports:
 - name: github.com/inconshreveable/mousetrap
   version: 76626ae9c91c4f2a10f34cad8ce83ea42c93bb75
 - name: github.com/ion-channel/ionic
-  version: e94a2d08e6efb425e2fe557e5ed51b99a415019d
+  version: 05046a1720a32f03e2e4005ce7d9d897956fe172
   subpackages:
   - aliases
   - analyses
   - community
+  - deliveries
   - dependencies
   - digests
   - errors
-  - events
   - pagination
+  - portfolios
   - products
   - projects
   - reports
@@ -82,7 +83,7 @@ imports:
 - name: github.com/mitchellh/mapstructure
   version: 3536a929edddb9a5b34bd6861dc4a9647cb459fe
 - name: github.com/pelletier/go-toml
-  version: 84da2c4a25c585816f2c4211b699228d111d18ab
+  version: 26fd12ff5458ed76bb7be556938691838288a855
 - name: github.com/spf13/afero
   version: 588a75ec4f32903aa5e39a2619ba6a4631e28424
   subpackages:
@@ -94,11 +95,11 @@ imports:
 - name: github.com/spf13/jwalterweatherman
   version: 94f6ae3ed3bceceafa716478c5fbf8d29ca601a1
 - name: github.com/spf13/pflag
-  version: 24fa6976df40757dce6aea913e7b81ade90530e1
+  version: 972238283c0625cf3e881de7699ba8f2524c340a
 - name: github.com/spf13/viper
   version: 25b30aa063fc18e48662b86996252eabdcf2f0c7
 - name: golang.org/x/sys
-  version: 1393eb0183657fb29200106b17a5042ec6e48dbe
+  version: b4ddaad3f8a36719f2b8bc6486c14cc468ca2bb5
   subpackages:
   - unix
 - name: golang.org/x/text
@@ -144,7 +145,7 @@ testImports:
   - matchers/support/goraph/util
   - types
 - name: golang.org/x/net
-  version: ca1201d0de80cfde86cb01aea620983605dfe99b
+  version: 74dc4d7220e7acc4e100824340f3e66577424772
   subpackages:
   - html
   - html/atom
