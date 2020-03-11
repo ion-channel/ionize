@@ -3,7 +3,7 @@ import:
 - package: github.com/aws/aws-sdk-go/
   version: v1.13.25
 - package: github.com/ion-channel/ionic
-  version: e94a2d08e6efb425e2fe557e5ed51b99a415019d
+  version: 05046a1720a32f03e2e4005ce7d9d897956fe172
   subpackages:
   - reports
   - scanner

@@ -1,4 +1,4 @@
-// Copyright 2017 Unknwon
+// Copyright 2019 Unknwon
 //
 // Licensed under the Apache License, Version 2.0 (the "License"): you may
 // not use this file except in compliance with the License. You may obtain
@@ -19,12 +19,6 @@ import (
 
 	. "github.com/smartystreets/goconvey/convey"
 )
-
-func Test_Version(t *testing.T) {
-	Convey("Get version", t, func() {
-		So(Version(), ShouldEqual, version)
-	})
-}
 
 func Test_isSlice(t *testing.T) {
 	Convey("Check if a string is in the slice", t, func() {

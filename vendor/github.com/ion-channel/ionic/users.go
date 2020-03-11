@@ -7,7 +7,6 @@ import (
 	"net/url"
 
 	"github.com/ion-channel/ionic/errors"
-	"github.com/ion-channel/ionic/events"
 	"github.com/ion-channel/ionic/users"
 )
 
@@ -55,37 +54,11 @@ func (ic *IonClient) CreateUser(email, username, password, token string) (*users
 	return &u, nil
 }
 
-// GetUsersSubscribedForEvent takes an event and token, and returns a list of users
-// subscribed to that event and returns an error if there are JSON marshaling
-// or unmarshaling issues or issues with the request
-func (ic *IonClient) GetUsersSubscribedForEvent(event events.Event, token string) ([]users.User, error) {
-	b, err := json.Marshal(event)
-	if err != nil {
-		return nil, errors.Prepend("get users subscribed for event: failed marshaling event", err)
-	}
-
-	buff := bytes.NewBuffer(b)
-	b, err = ic.Post(users.UsersSubscribedForEventEndpoint, token, nil, *buff, nil)
-	if err != nil {
-		return nil, errors.Prepend("get users subscribed for event", err)
-	}
-
-	var users struct {
-		Users []users.User `json:"users"`
-	}
-	err = json.Unmarshal(b, &users)
-	if err != nil {
-		return nil, errors.Prepend("get users subscribed for event: failed unmarshaling users", err)
-	}
-
-	return users.Users, nil
-}
-
 // GetSelf returns the user object associated with the bearer token provided.
 // An error is returned if the client cannot talk to the API or the returned
 // user object is nil or blank
 func (ic *IonClient) GetSelf(token string) (*users.User, error) {
-	b, err := ic.Get(users.UsersGetSelfEndpoint, token, nil, nil, nil)
+	b, _, err := ic.Get(users.UsersGetSelfEndpoint, token, nil, nil, nil)
 	if err != nil {
 		return nil, errors.Prepend("get self", err)
 	}
@@ -106,7 +79,7 @@ func (ic *IonClient) GetUser(id, token string) (*users.User, error) {
 	params := &url.Values{}
 	params.Set("id", id)
 
-	b, err := ic.Get(users.UsersGetUserEndpoint, token, params, nil, nil)
+	b, _, err := ic.Get(users.UsersGetUserEndpoint, token, params, nil, nil)
 	if err != nil {
 		return nil, errors.Prepend("get user", err)
 	}
@@ -122,7 +95,7 @@ func (ic *IonClient) GetUser(id, token string) (*users.User, error) {
 
 // GetUsers requests and returns all users for a given installation
 func (ic *IonClient) GetUsers(token string) ([]users.User, error) {
-	b, err := ic.Get(users.UsersGetUsers, token, nil, nil, nil)
+	b, _, err := ic.Get(users.UsersGetUsers, token, nil, nil, nil)
 	if err != nil {
 		return nil, errors.Prepend("get users", err)
 	}

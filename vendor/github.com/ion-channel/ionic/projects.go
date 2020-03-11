@@ -113,7 +113,7 @@ func (ic *IonClient) GetProject(id, teamID, token string) (*projects.Project, er
 	params.Set("id", id)
 	params.Set("team_id", teamID)
 
-	b, err := ic.Get(projects.GetProjectEndpoint, token, params, nil, nil)
+	b, _, err := ic.Get(projects.GetProjectEndpoint, token, params, nil, nil)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get project: %v", err.Error())
 	}
@@ -134,7 +134,7 @@ func (ic *IonClient) GetRawProject(id, teamID, token string) (json.RawMessage, e
 	params.Set("id", id)
 	params.Set("team_id", teamID)
 
-	b, err := ic.Get(projects.GetProjectEndpoint, token, params, nil, nil)
+	b, _, err := ic.Get(projects.GetProjectEndpoint, token, params, nil, nil)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get project: %v", err.Error())
 	}
@@ -144,11 +144,15 @@ func (ic *IonClient) GetRawProject(id, teamID, token string) (json.RawMessage, e
 
 // GetProjects takes a team ID and returns the projects for that team.  It
 // returns an error for any API errors it may encounter.
-func (ic *IonClient) GetProjects(teamID, token string, page *pagination.Pagination) ([]projects.Project, error) {
+func (ic *IonClient) GetProjects(teamID, token string, page *pagination.Pagination, filter *projects.Filter) ([]projects.Project, error) {
 	params := &url.Values{}
 	params.Set("team_id", teamID)
 
-	b, err := ic.Get(projects.GetProjectsEndpoint, token, params, nil, page)
+	if filter != nil {
+		params.Set("filter_by", filter.Param())
+	}
+
+	b, _, err := ic.Get(projects.GetProjectsEndpoint, token, params, nil, page)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get projects: %v", err.Error())
 	}
@@ -170,7 +174,7 @@ func (ic *IonClient) GetProjectByURL(uri, teamID, token string) (*projects.Proje
 	params.Set("url", uri)
 	params.Set("team_id", teamID)
 
-	b, err := ic.Get(projects.GetProjectByURLEndpoint, token, params, nil, nil)
+	b, _, err := ic.Get(projects.GetProjectByURLEndpoint, token, params, nil, nil)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get projects by url: %v", err.Error())
 	}
@@ -188,6 +192,10 @@ func (ic *IonClient) GetProjectByURL(uri, teamID, token string) (*projects.Proje
 // project stored or an error encountered by the API
 func (ic *IonClient) UpdateProject(project *projects.Project, token string) (*projects.Project, error) {
 	params := &url.Values{}
+
+	if project.ID == nil {
+		return nil, fmt.Errorf("%v: %v", projects.ErrInvalidProject, "missing id")
+	}
 
 	fields, err := project.Validate(ic.client, ic.baseURL, token)
 	if err != nil {

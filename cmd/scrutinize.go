@@ -67,7 +67,7 @@ Will read the configuration from the $PWD/.ionize.yaml file and begin an analysi
 		}
 		project, err = cli.CreateProject(project, team, key)
 		if err != nil {
-			projects, er := cli.GetProjects(team, key, pagination.AllItems)
+			projects, er := cli.GetProjects(team, key, pagination.AllItems, nil)
 			if er != nil {
 				log.Fatalf("Failed to receive projects: %v", err.Error())
 			}
@@ -81,7 +81,13 @@ Will read the configuration from the $PWD/.ionize.yaml file and begin an analysi
 				log.Fatalf("Failed to create project: %v", err.Error())
 			}
 		} else {
-			_, err = cli.AddAlias(*project.ID, team, name, version, key)
+			o := ionic.AddAliasOptions{
+				Name:      name,
+				ProjectID: *project.ID,
+				TeamID:    team,
+				Version:   version,
+			}
+			_, err = cli.AddAlias(o, key)
 			if err != nil {
 				log.Fatalf("Failed to add alias to project, analysis depth will be reduced: %v", err.Error())
 			}

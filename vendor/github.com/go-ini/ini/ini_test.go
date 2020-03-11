@@ -52,15 +52,11 @@ var update = flag.Bool("update", false, "Update .golden files")
 
 func TestLoad(t *testing.T) {
 	Convey("Load from good data sources", t, func() {
-		f, err := ini.Load([]byte(`
-NAME = ini
-VERSION = v1
-IMPORT_PATH = gopkg.in/%(NAME)s.%(VERSION)s`),
+		f, err := ini.Load(
 			"testdata/minimal.ini",
-			ioutil.NopCloser(bytes.NewReader([]byte(`
-[author]
-NAME = Unknwon
-`))),
+			[]byte("NAME = ini\nIMPORT_PATH = gopkg.in/%(NAME)s.%(VERSION)s"),
+			bytes.NewReader([]byte(`VERSION = v1`)),
+			ioutil.NopCloser(bytes.NewReader([]byte("[author]\nNAME = Unknwon"))),
 		)
 		So(err, ShouldBeNil)
 		So(f, ShouldNotBeNil)
@@ -265,6 +261,19 @@ e-mail = u@gogs.io
 
 			So(f.Section("Author").Key("e-mail").String(), ShouldBeEmpty)
 		})
+	})
+
+	// Ref: https://github.com/go-ini/ini/issues/198
+	Convey("Insensitive load with default section", t, func() {
+		f, err := ini.InsensitiveLoad([]byte(`
+user = unknwon
+[profile]
+email = unknwon@local
+`))
+		So(err, ShouldBeNil)
+		So(f, ShouldNotBeNil)
+
+		So(f.Section(ini.DefaultSection).Key("user").String(), ShouldEqual, "unknwon")
 	})
 }
 
@@ -822,18 +831,26 @@ GITHUB = U;n;k;n;w;o;n
 
 		Convey("with false `AllowPythonMultilineValues`", func() {
 			Convey("Ignore nonexistent files", func() {
-				f, err := ini.LoadSources(ini.LoadOptions{AllowPythonMultilineValues: false, Loose: true}, notFoundConf, minimalConf)
+				f, err := ini.LoadSources(ini.LoadOptions{
+					AllowPythonMultilineValues: false,
+					Loose:                      true,
+				}, notFoundConf, minimalConf)
 				So(err, ShouldBeNil)
 				So(f, ShouldNotBeNil)
 
 				Convey("Inverse case", func() {
-					_, err = ini.LoadSources(ini.LoadOptions{AllowPythonMultilineValues: false}, notFoundConf)
+					_, err = ini.LoadSources(ini.LoadOptions{
+						AllowPythonMultilineValues: false,
+					}, notFoundConf)
 					So(err, ShouldNotBeNil)
 				})
 			})
 
 			Convey("Insensitive to section and key names", func() {
-				f, err := ini.LoadSources(ini.LoadOptions{AllowPythonMultilineValues: false, Insensitive: true}, minimalConf)
+				f, err := ini.LoadSources(ini.LoadOptions{
+					AllowPythonMultilineValues: false,
+					Insensitive:                true,
+				}, minimalConf)
 				So(err, ShouldBeNil)
 				So(f, ShouldNotBeNil)
 
@@ -850,7 +867,9 @@ e-mail = u@gogs.io
 				})
 
 				Convey("Inverse case", func() {
-					f, err := ini.LoadSources(ini.LoadOptions{AllowPythonMultilineValues: false}, minimalConf)
+					f, err := ini.LoadSources(ini.LoadOptions{
+						AllowPythonMultilineValues: false,
+					}, minimalConf)
 					So(err, ShouldBeNil)
 					So(f, ShouldNotBeNil)
 
