@@ -13,9 +13,10 @@ builds:
 
 dockers:
   -
+    goos: linux
+
+    goarch: amd64
+
     image_templates:
       - "ionchannel/ionize:latest"
       - "ionchannel/ionize:{{ .Env.TRAVIS_TAG }}"
-
-    build_flag_templates:
-      - "--build-arg=BUILD_PATH=/go/src/github.com/ion-channel/ionize"
