@@ -10,3 +10,12 @@ builds:
     - darwin
     - windows
     - linux
+
+dockers:
+  -
+    image_templates:
+      - "ionchannel/ionize:latest"
+      - "ionchannel/ionize:{{ .Env.TRAVIS_TAG }}"
+
+    build_flag_templates:
+      - "--build-arg=BUILD_PATH=/go/src/github/ion-channel/ionize"
