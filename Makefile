@@ -28,7 +28,7 @@ GIT_COMMIT_HASH ?= $(TRAVIS_COMMIT)
 
 
 .PHONY: all
-all: test build
+all: test
 
 .PHONY: travis_setup
 travis_setup: ## Setup the travis environmnet
@@ -50,13 +50,6 @@ analyze:  ## Perform an analysis of the project
 	else \
 		ionize analyze; \
 	fi
-
-.PHONY: build
-build: ## Build the project
-	@echo "Building latest image"
-	docker build \
-		--build-arg BUILD_PATH=/go$${PWD/$$GOPATH} \
-		-t ionchannel/ionize .
 
 .PHONY: deploy
 deploy: ## Deploy the artifacts
