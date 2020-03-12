@@ -11,6 +11,10 @@ builds:
     - windows
     - linux
 
+archives:
+  -
+    name_template: "{{ .ProjectName }}_{{ .Os }}_{{ .Arch }}"
+
 dockers:
   -
     goos: linux
