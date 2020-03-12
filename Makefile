@@ -71,6 +71,7 @@ clean:  ## Clean out all generated files
 	-@rm -rf deploy
 	-@rm -rf coverage
 	-@rm -f coverage.txt
+	-@rm -rf dist
 
 .PHONY: coverage
 coverage:  ## Generates the code coverage from all the tests
