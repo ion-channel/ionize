@@ -59,20 +59,10 @@ build: ## Build the project
 		-t ionchannel/ionize .
 
 .PHONY: deploy
-deploy: #build
+deploy: ## Deploy the artifacts
 	@echo "Logging into Docker Hub"
 	-@echo "$(DOCKER_PASSWORD)" | docker login -u "$(DOCKER_USERNAME)" --password-stdin
-
-	@if [[ ! -z "$(TRAVIS_TAG)" ]] ; then  \
-		echo "Pushing release image to Docker Hub" ; \
-		docker tag ionchannel/ionize:latest ionchannel/ionize:$(TRAVIS_TAG) ; \
-		docker push ionchannel/ionize:$(TRAVIS_TAG) ; \
-	fi
-
-	@if [[ "master" == "$(TRAVIS_BRANCH)" ]] ; then \
-		echo "Pushing image to Docker Hub" ; \
-		docker push ionchannel/ionize:latest ; \
-	fi
+	@ext/goreleaser release
 
 .PHONY: clean
 clean:  ## Clean out all generated files
@@ -81,6 +71,7 @@ clean:  ## Clean out all generated files
 	-@rm -rf deploy
 	-@rm -rf coverage
 	-@rm -f coverage.txt
+	-@rm -rf dist
 
 .PHONY: coverage
 coverage:  ## Generates the code coverage from all the tests

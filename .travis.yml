@@ -29,14 +29,8 @@ deploy:
       tags: true
 
   - provider: script
-    script: make deploy
-    on:
-      tags: true
-      branch: master
-
-  - provider: script
     skip_cleanup: true
-    script: ext/goreleaser release
+    script: make deploy
     on:
       go: '1.13'
       tags: true
