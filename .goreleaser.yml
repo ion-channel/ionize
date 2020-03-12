@@ -18,4 +18,4 @@ dockers:
       - "ionchannel/ionize:{{ .Env.TRAVIS_TAG }}"
 
     build_flag_templates:
-      - "--build-arg=BUILD_PATH=/go/src/github/ion-channel/ionize"
+      - "--build-arg=BUILD_PATH=/go/src/github.com/ion-channel/ionize"
