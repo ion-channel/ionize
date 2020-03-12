@@ -62,7 +62,7 @@ build: ## Build the project
 deploy: ## Deploy the artifacts
 	@echo "Logging into Docker Hub"
 	-@echo "$(DOCKER_PASSWORD)" | docker login -u "$(DOCKER_USERNAME)" --password-stdin
-	@goreleaser release --skip-publish
+	@ext/goreleaser release
 
 .PHONY: clean
 clean:  ## Clean out all generated files
