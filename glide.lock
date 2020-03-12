@@ -1,5 +1,5 @@
-hash: 1ff114e2345a445879a134c464ca42eb6046f2535742e9c3e866243d92ab8e74
-updated: 2020-03-11T14:09:28.469144-07:00
+hash: 095079c2584ff1ec5a9b95c6e35054783153da95a9d0a2512790a56195633d97
+updated: 2020-03-11T17:07:16.529918-07:00
 imports:
 - name: github.com/aws/aws-sdk-go
   version: 74ca63959be8b9a9a24cd86eaaea8bf99de8022d
@@ -51,7 +51,7 @@ imports:
 - name: github.com/inconshreveable/mousetrap
   version: 76626ae9c91c4f2a10f34cad8ce83ea42c93bb75
 - name: github.com/ion-channel/ionic
-  version: 05046a1720a32f03e2e4005ce7d9d897956fe172
+  version: fa3a6901779172f532857a0b6f6fbda64bbbba2d
   subpackages:
   - aliases
   - analyses
