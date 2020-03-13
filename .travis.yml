@@ -15,19 +15,7 @@ script:
 notifications:
   email: false
 
-before_deploy: make crosscompile
-
 deploy:
-  - provider: s3
-    bucket: public.ionchannel.io
-    region: us-east-1
-    skip_cleanup: true
-    upload-dir: files/ionize
-    local_dir: deploy
-    acl: public_read
-    on:
-      tags: true
-
   - provider: script
     skip_cleanup: true
     script: make deploy
