@@ -30,10 +30,6 @@ all: test
 .PHONY: travis_setup
 travis_setup: ## Setup the travis environmnet
 	@if [[ -n "$$BUILD_ENV" ]] && [[ "$$BUILD_ENV" == "testing" ]]; then echo -e "$(INFO_COLOR)THIS IS EXECUTING AGAINST THE TESTING ENVIRONMEMNT$(NO_COLOR)"; fi
-	@echo "Installing AWS cli"
-	@curl "https://s3.amazonaws.com/aws-cli/awscli-bundle.zip" -o "awscli-bundle.zip"
-	@unzip awscli-bundle.zip
-	@sudo /usr/bin/python3.5 ./awscli-bundle/install -i /usr/local/aws -b /usr/local/bin/aws
 	@echo "Downloading latest Ionize"
 	@wget --quiet https://s3.amazonaws.com/public.ionchannel.io/files/ionize/linux/bin/ionize
 	@chmod +x ionize && mkdir -p $$HOME/.local/bin && mv ionize $$HOME/.local/bin
@@ -75,12 +71,6 @@ coverage_compfriendly:  ## Generates the code coverage in a computer friendly ma
 	@echo 'mode: count' > $(COVERAGE_DIR)/tmp/full.out
 	@tail -q -n +2 $(COVERAGE_DIR)/*.out >> $(COVERAGE_DIR)/tmp/full.out
 	@$(GOCMD) tool cover -func=$(COVERAGE_DIR)/tmp/full.out | tail -n 1 | sed -e 's/^.*statements)[[:space:]]*//' -e 's/%//'
-
-.PHONY: crosscompile
-crosscompile:  ## Build the binaries for the primary OS'
-	GOOS=linux $(GOBUILD) -ldflags "-X main.buildTime=$(DATE) -o deploy/linux/bin/$(APP) .
-	GOOS=darwin $(GOBUILD) -ldflags "-X main.buildTime=$(DATE) -o deploy/darwin/bin/$(APP) .
-	GOOS=windows $(GOBUILD) -ldflags "-X main.buildTime=$(DATE) -o deploy/windows/bin/$(APP).exe .
 
 .PHONY: help
 help:  ## Show This Help
