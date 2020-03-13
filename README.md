@@ -8,19 +8,28 @@
 Wrapper around ion-connect to manage the asynchronous calls necessary to embed in a CI/CD process
 
 # Requirements
-Golang Version 1.8 or higher
+Golang Version 1.13 or higher
 
 # Installation
-Ionize can be run either as a native tool or indirectly within a Docker
+Ionize can be installed from source, a binary download, or indirectly within a Docker
 container.
 
 Go:
+
 ```
 go get github.com/ion-channel/ionize
+cd $GOPATH/src/github.com/ion-channel/ionize
+go build
+go install
 ```
+
+Binary:
+
+[http://github.com/ion-channel/ionize/releases/latest](http://github.com/ion-channel/ionize/releases/latest)
 
 
 Docker:
+
 ```
 docker pull ionchannel/ionize
 ```
@@ -31,6 +40,7 @@ the Ion Channel console.  Once you have the key you can supply it to Ionize with
 variable.
 
 Running with the native tool:
+
 ```
 IONCHANNEL_SECRET_KEY=<secret> ionize help
 ```
@@ -38,6 +48,7 @@ IONCHANNEL_SECRET_KEY=<secret> ionize help
 
 
 And within a docker container:
+
 ```
 docker run -it -e IONCHANNEL_SECRET_KEY=<secret> ionchannel/ionize help
 ```
