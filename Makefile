@@ -32,7 +32,7 @@ travis_setup: ## Setup the travis environmnet
 	@if [[ -n "$$BUILD_ENV" ]] && [[ "$$BUILD_ENV" == "testing" ]]; then echo -e "$(INFO_COLOR)THIS IS EXECUTING AGAINST THE TESTING ENVIRONMEMNT$(NO_COLOR)"; fi
 	@echo "Downloading latest Ionize"
 	@wget --quiet https://github.com/ion-channel/ionize/releases/download/v0.2.2/ionize_linux_386.tar.gz -O ionize.tar.gz
-	@mkdir -p $$HOME/.local/bin && tar xvf ionize.tar.gz -C $$HOME/.local/bin
+	@mkdir -p $$HOME/.local/bin && tar xvf ionize.tar.gz -C $$HOME/.local/bin ; rm ionize.tar.gz
 	@echo "Installing Go Linter"
 	@go get -u golang.org/x/lint/golint
 
