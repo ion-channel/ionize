@@ -113,11 +113,11 @@ Will read the configuration from the $PWD/.ionize.yaml file and begin an analysi
 		fmt.Printf("%s\n", analysisStatus.Status)
 
 		fmt.Println("Checking status of scans")
-		report, err := cli.GetAnalysisReport(id, team, *project.ID, key)
+		eval, err := cli.GetAppliedRuleSet(*project.ID, team, id, key)
 		if err != nil {
-			log.Fatalf("Analysis Report request failed for %v (%s): %v", project.Name, id, err.Error())
+			log.Fatalf("Analysis evaluation request failed for %s (%s): %v", project, id, err.Error())
 		}
 
-		os.Exit(printReport(report))
+		os.Exit(printEval(eval))
 	},
 }
