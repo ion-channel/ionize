@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/ion-channel/ionic"
-	"github.com/ion-channel/ionic/reports"
+	"github.com/ion-channel/ionic/rulesets"
 	"github.com/ion-channel/ionize/cmd/external"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -109,12 +109,12 @@ Will read the configuration from the $PWD/.ionize.yaml file and begin an analysi
 			}
 
 			fmt.Println("Checking status of scans")
-			report, err := cli.GetAnalysisReport(id, team, project, key)
+			eval, err := cli.GetAppliedRuleSet(project, team, id, key)
 			if err != nil {
-				log.Fatalf("Analysis Report request failed for %s (%s): %v", project, id, err.Error())
+				log.Fatalf("Analysis evaluation request failed for %s (%s): %v", project, id, err.Error())
 			}
 
-			os.Exit(printReport(report))
+			os.Exit(printEval(eval))
 		}
 	},
 }
@@ -136,8 +136,8 @@ func getBranch() string {
 	return ""
 }
 
-func printReport(report *reports.AnalysisReport) int {
-	for _, scanSummary := range report.Report.RulesetEvaluation.RuleEvaluationSummary.Ruleresults {
+func printEval(rulesetEvaluation *rulesets.AppliedRulesetSummary) int {
+	for _, scanSummary := range rulesetEvaluation.RuleEvaluationSummary.Ruleresults {
 		fmt.Print(scanSummary.Summary, "...Rule Type: ")
 		fmt.Print(scanSummary.Type, "...")
 		if scanSummary.Passed {
@@ -149,7 +149,7 @@ func printReport(report *reports.AnalysisReport) int {
 		fmt.Println("...Risk: ", scanSummary.Risk)
 	}
 
-	if !report.Report.RulesetEvaluation.RuleEvaluationSummary.Passed {
+	if !rulesetEvaluation.RuleEvaluationSummary.Passed {
 		fmt.Println("Analysis failed on a rule")
 		return 1
 	}
