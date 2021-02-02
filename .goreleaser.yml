@@ -10,6 +10,10 @@ builds:
     - darwin
     - windows
     - linux
+    
+  ignore:
+    - goos: darwin
+      goarch: 386
 
 archives:
   -
