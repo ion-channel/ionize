@@ -13,12 +13,3 @@ project: project id
 # Specify the location of the coverage value
 # must be a float value
 coverage: coverage.txt
-
-# Path to a Fortify FPR file use to determine
-# external vulnerabilities
-fortify: file.fpr
-
-# Name of the S3 bucket used for temporary
-# storage of external artifacts used in an
-# analysis
-bucket: s3-bucket
