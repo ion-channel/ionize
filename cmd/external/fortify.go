@@ -85,7 +85,7 @@ func ParseFortify(path string) (*Fortify, error) {
 	}, nil
 }
 
-//Fortify struct container for encapsalating external vulnerability scan data
+//Fortify struct container for encapsulating external vulnerability scan data
 type Fortify struct {
 	FVDL  *FVDL
 	Value *scanner.ExternalScan

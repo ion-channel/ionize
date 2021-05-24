@@ -21,7 +21,7 @@ func ParseCoverage(path string) (*Coverage, error) {
 	}, nil
 }
 
-// Coverage - encapsalates external code coverage data
+// Coverage - encapsulates external code coverage data
 type Coverage struct {
 	Value *scanner.ExternalCoverage
 }

@@ -28,7 +28,7 @@ type Vulnerabilities struct {
 	Value *scanner.ExternalScan
 }
 
-//Save sends the external vulnerability scan data to ion channel for persistance
+//Save sends the external vulnerability scan data to ion channel for persistence
 func (c *Vulnerabilities) Save(aID *AnalysisID, cli *ionic.IonClient) (*scanner.AnalysisStatus, error) {
 	fmt.Println("Adding external coverage scan data")
 
