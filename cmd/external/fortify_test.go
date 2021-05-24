@@ -42,9 +42,8 @@ func TestFortify(t *testing.T) {
 		g.It("should unzip and fpr file", func() {
 			dir, _ := filepath.Abs(filepath.Join(os.Getenv("PWD"), "..", ".."))
 
-			path, err := unzip(strings.Join([]string{dir, "fortify.zip"}, "/"))
+			_, err := unzip(strings.Join([]string{dir, "fortify.zip"}, "/"))
 			Expect(err).To(BeNil())
-			Expect(path).To(ContainSubstring("github.com/ion-channel/ionize"))
 		})
 
 		g.It("should parse an fpr file", func() {
