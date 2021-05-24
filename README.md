@@ -5,7 +5,7 @@
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/ion-channel/ionize/blob/master/LICENSE.md)
 [![Release](https://img.shields.io/github/release/ion-channel/ionize.svg)](https://github.com/ion-channel/ionize/releases/latest)
 
-Wrapper around ion-connect to manage the asynchronous calls necessary to embed in a CI/CD process
+Wrapper around Ionic to manage the asynchronous calls necessary to embed in a CI/CD process
 
 # Requirements
 Golang Version 1.13 or higher
@@ -61,7 +61,7 @@ well as any configuration needed.  An example can be seen [here](https://github.
 
 # Versioning
 
-The project will be versioned in accordance with [Semver 2.0.0](http://semver.org).  See the [releases](https://github.com/ion-channel/ionic/releases) section for the latest version.  Until version 1.0.0 the project is considered to be unstable.
+The project is versioned in accordance with [Semver 2.0.0](http://semver.org).  See the [releases](https://github.com/ion-channel/ionic/releases) section for the latest version.  Versions prior to 1.0.0 are considered unstable.
 
 # License
 This project is distributed under the [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0).  See [LICENSE.md](./LICENSE.md) for more information.
