@@ -13,7 +13,7 @@ install:
   - make travis_setup
 
 script:
-  - make fmt vet lint unit_test coverage analyze install
+  - make fmt vet unit_test coverage analyze install
 
 notifications:
   email: false
