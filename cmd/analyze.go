@@ -14,13 +14,15 @@ import (
 )
 
 var (
-	async = false
+	async  = false
+	dryRun = false
 )
 
 func init() {
 	RootCmd.AddCommand(analyzeCmd)
 
 	analyzeCmd.Flags().BoolVarP(&async, "async", "a", false, "run the command asynchronously without waiting for completion")
+	analyzeCmd.Flags().BoolVarP(&dryRun, "dry-run", "", false, "run the command but don't return non zero on failure")
 }
 
 // AnalyzeCmd represents the doAnalysis command
@@ -151,7 +153,10 @@ func printEval(rulesetEvaluation *rulesets.AppliedRulesetSummary) int {
 
 	if !rulesetEvaluation.RuleEvaluationSummary.Passed {
 		fmt.Println("Analysis failed on a rule")
-		return 1
+		if !dryRun {
+			return 1
+		}
+
 	}
 
 	fmt.Println("Analysis passed all rules")
